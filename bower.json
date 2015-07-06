@@ -1,0 +1,20 @@
+{
+  "name": "Gordium",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ericehamlin/Gordium",
+  "authors": [
+    "Eric Hamlin <ehamlin@grio.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "raphael": "~2.1.4"
+  }
+}
