@@ -1,51 +1,33 @@
 class Knotwork {
-    constructor(filename=null, svgObject=null) {
 
-
-
+    /**
+     *
+     * @param filename
+     * @param svg
+     */
+    constructor(filename=null, svg=null) {
+        let self = this;
         this.filename = filename;
-        this.svgObject = svgObject;
+        this.svg = svg;
 
         if (filename !== null) {
             this.filename = filename;
 
-            var request = new XMLHttpRequest();
-            request.open('GET', filename, true);
-            request.onreadystatechange = onSumResponse;
-            request.send(null);
-
-            function onSumResponse(event) {
-                if(request.readyState === 4) { // request finished and response is ready
-                    if (request.status !== 200) {
-                        throw "couldn't load file"
-                    }
-                    var element = document.createElement("div");
-                    var svgXml = request.responseText.replace(/^(.|\n|\r)*?(<svg)/im, "$2");
-                    element.insertAdjacentHTML("afterbegin", svgXml);
-                    var paths = element.getElementsByTagName("path");
-                    console.log(paths);
-
-                }
-            };
-
-            /*fetch(filename, {
-                method: 'get',
-                headers: {
-                    'Accept': 'text/xml',
-                    'Content-Type': 'text/xml'
-                }
-            }).then(function(response) {
-                console.log(response);
-                document.createElement('a');
-            }).catch(function(err) {
-                throw "couldn't load file"
-            });*/
+            Gordium.loadSvg(filename).then(function(svg) {
+                self.svg = svg;
+                var paths = Gordium.getPathsFromSvg(self.svg);
+                console.log("PATHS3", paths);
+            }).catch(function(error) {
+                console.log(error);
+            });
         }
-        else if (svgObject !== null) {
+        else if (svg !== null) {
 
         }
         else {
-            throw "hey, no svgObject!";
+            throw new Error("hey, no svg!");
         }
+
+
     }
 }

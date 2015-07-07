@@ -21,7 +21,12 @@ var options = {
     }
 };
 
-gulp.task('default', function () {
+
+gulp.task('default', ['clean'], function () {
+    gulp.start('build');
+});
+
+gulp.task('build', function () {
     return gulp.src('src/**/*.js')
             .pipe(sourcemaps.init())
             .pipe(babel())
@@ -32,4 +37,10 @@ gulp.task('default', function () {
 
 gulp.task('clean', function (done) {
     del([options.dist + '/', options.tmp + '/'], done);
+});
+
+gulp.task('watch', function () {
+    gulp.watch([options.src + '/**/*'], function (event) {
+        gulp.start('default');
+    });
 });
