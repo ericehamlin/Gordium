@@ -33,8 +33,37 @@ class Gordium {
      * @returns {NodeList}
      */
     static getPathsFromSvg(svg) {
-        var paths = svg.getElementsByTagName("path");
+        let paths = svg.getElementsByTagName("path");
         return paths;
+    }
+
+    /**
+     * Approximate curves with Polylines
+     * TODO: If straight lines, don't approximate. Use lines
+     * TODO: If there are corners, keep them
+     *
+     * @param path
+     * @param fromLength
+     * @param toLength
+     * @param sampleInterval
+     * @returns {Array}
+     */
+    static getPointsFromPath(path, fromLength, toLength, sampleInterval) {
+        let points = [];
+        for (var i=fromLength ; i<toLength ; i+=sampleInterval) {
+            points.push({
+                x: path.getPointAtLength(i).x,
+                y: path.getPointAtLength(i).y,
+                pathLength: i
+            });
+        }
+        points.push({
+            x: path.getPointAtLength(toLength).x,
+            y: path.getPointAtLength(toLength).y,
+            pathLength: i
+        });
+
+        return points;
     }
 
     /**
@@ -139,7 +168,6 @@ class Gordium {
             maxX2 = Math.max(segment2.x1, segment2.x2),
             minX2 = Math.min(segment2.x1, segment2.x2);
 
-        console.log(x,y, maxX1, maxX2, minX1, minX2);
         if (x >= maxX1 || x >= maxX2 || x <= minX1 || x <= minX2) return null;
         return {
             x:x,
@@ -156,5 +184,13 @@ class Gordium {
 
     static getSubpath(path, from, to) {
         return Raphael.getSubpath(path, from, to);
+    }
+
+    static randomInteger(max) {
+        return Math.round(Math.random() * max);
+    }
+
+    static randomColor() {
+        return "rgb(" + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + ")";
     }
 }
