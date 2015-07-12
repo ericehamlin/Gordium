@@ -15,13 +15,15 @@ class Knot {
 
     /**
      * Break curve into curve segments on either side of intersections
+     * todo tie curves to intersections so we can get over/under
      */
     segmentCurves() {
         var newPaths = [];
         var pathIndex = 0;
         var startPoint = 0;
         var fromLength = 0;
-        var toLength = this.intersections[0]/2;
+        var toLength = this.intersections[0].distance1/2;
+
         for (var j=0; j<this.intersections.length; j++) {
             if (newPaths[pathIndex] == undefined) {
                 newPaths[pathIndex] = [];
@@ -42,7 +44,6 @@ class Knot {
             newPaths[pathIndex].push(this.path.getPointAtLength(i).x);
             newPaths[pathIndex].push(this.path.getPointAtLength(i).y);
         }
-        console.log(this.sampleInterval, newPaths);
         this.pathSegments = newPaths;
 
 
@@ -69,6 +70,35 @@ class Knot {
 
     }
 
+    drawCurves(intersectionIndex, over=true) {
+        var startIntersectionIndex = intersectionIndex;
+        var startOver = over;
+
+        var intersection = this.intersections[intersectionIndex];
+        if (intersection.over !== undefined) {
+            return;
+        }
+        while(intersectionIndex > 0) {
+            var intersection = this.intersections[--intersectionIndex];
+            if (intersection.over !== undefined) {
+                break;
+            }
+            intersection.over = over;
+            over = !over
+        }
+        over = startOver;
+
+        intersectionIndex = startIntersectionIndex;
+        while(intersectionIndex < this.intersections.length-1) {
+            var intersection = this.intersections[++intersectionIndex];
+            if (intersection.over !== undefined) {
+                break;
+            }
+            intersection.over = over;
+            over = !over
+        }
+    }
+
     /**
      * TODO debug only
      */
@@ -78,8 +108,8 @@ class Knot {
             var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             circle.setAttribute("r", 5);
             circle.setAttribute("fill", "red");
-            circle.setAttribute("cx", this.path.getPointAtLength(intersection).x);
-            circle.setAttribute("cy", this.path.getPointAtLength(intersection).y);
+            circle.setAttribute("cx", intersection.x);
+            circle.setAttribute("cy", intersection.y);
 
             // TODO global debug svg
             document.getElementsByTagName("svg")[1].appendChild(circle);

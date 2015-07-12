@@ -101,8 +101,6 @@ class Gordium {
 
                         knot.intersections.push(newIntersection);
                         knot.intersections.push(newIntersection2);
-                        //knot.intersections.push(distance1);
-                        //knot.intersections.push(distance2);
                     }
                 }
 
@@ -120,20 +118,15 @@ class Gordium {
                             let newIntersection = new Intersection(knot, distance1, knot2, distance2, intersection.x, intersection.y);
                             let newIntersection2 = new Intersection(knot2, distance2, knot, distance1, intersection.x, intersection.y);
                             knot.intersections.push(newIntersection);
-                            knot2.intersections.push(newIntersection2);
-                            //knot.intersections.push((j * sampleInterval) + (intersection.segment1Percent * sampleInterval / 100));
-                            //knot2.intersections.push((y * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100));
+                            knot2.intersections.push(newIntersection2)
                         }
                     }
                 }
             }
 
-            for(var i=0; i<this.knots.length; i++) {
-                var knot = this.knots[1];
-                knot.intersections.sort(function(a, b) {
+            knot.intersections.sort(function(a, b) {
                     return a.distance1 > b.distance1;
                 });
-            }
         }
     }
 

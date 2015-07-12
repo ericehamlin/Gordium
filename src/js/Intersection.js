@@ -7,6 +7,7 @@ class Intersection {
         this.distance2 = distance2;
         this.x = x;
         this.y = y;
+        this.over = undefined;
     }
 
     setOver(over) {
