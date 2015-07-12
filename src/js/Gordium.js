@@ -93,9 +93,13 @@ class Gordium {
                     var segment2 = Gordium.defineSegment(points[k], points[k+1]);
                     var intersection = Gordium.linesIntersect(segment1, segment2);
                     if (intersection) {
-                        console.log("interSECTION!", j, k);
-                        knot.intersections.push((j * sampleInterval)  + (intersection.segment1Percent * sampleInterval / 100));
-                        knot.intersections.push((k * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100));
+                        var distance1 = (j * sampleInterval)  + (intersection.segment1Percent * sampleInterval / 100);
+                        var distance2 = (k * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
+                        // 1 intersection object
+                        let newIntersection = new Intersection(knot, distance1, knot, distance2, intersection.x, intersection.y);
+
+                        knot.intersections.push(distance1);
+                        knot.intersections.push(distance2);
                     }
                 }
 
