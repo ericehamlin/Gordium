@@ -8,4 +8,8 @@ class Intersection {
         this.x = x;
         this.y = y;
     }
+
+    setOver(over) {
+        this.over = over;
+    }
 }

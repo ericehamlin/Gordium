@@ -35,7 +35,7 @@ class Knot {
             newPaths[pathIndex].push(this.path.getPointAtLength(toLength).y);
             pathIndex++;
             fromLength = toLength;
-            toLength = j===this.intersections.length-1 ? this.path.getTotalLength() : (this.intersections[j] + this.intersections[j+1])/2;
+            toLength = j===this.intersections.length-1 ? this.path.getTotalLength() : (this.intersections[j].distance1 + this.intersections[j+1].distance2)/2;
         }
         newPaths[pathIndex] = [];
         for (var i = fromLength; i < toLength; i += this.sampleInterval) {
