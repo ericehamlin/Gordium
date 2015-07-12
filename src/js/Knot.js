@@ -44,7 +44,7 @@ class Knot {
         }
         console.log(this.sampleInterval, newPaths);
         this.pathSegments = newPaths;
-        
+
 
         /*
          paths[paths.length] = newPath;

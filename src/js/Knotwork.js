@@ -41,7 +41,12 @@ class Knotwork {
         Gordium.findIntersectionsForKnots(this.knots, this.sampleInterval);
         this.drawIntersections();
         this.segmentCurves();
+        // find Over/Under for path segments
+        // find curves from path segments
+        // animate each curve
         this.drawCurveSegments();
+
+
     }
 
     /**
