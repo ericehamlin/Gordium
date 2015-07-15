@@ -13,4 +13,8 @@ class Intersection {
     setOver(over) {
         this.over = over;
     }
+
+    setPathSegment(pathSegment) {
+
+    }
 }

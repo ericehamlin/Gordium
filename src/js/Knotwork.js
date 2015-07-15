@@ -41,11 +41,17 @@ class Knotwork {
         Gordium.findIntersectionsForKnots(this.knots, this.sampleInterval);
         this.drawIntersections();
         this.segmentCurves();
-        this.drawCurves();
+
         // find Over/Under for path segments
+        this.overUnderCurves();
+
         // find curves from path segments
+        //
+
         // animate each curve
-        this.drawCurveSegments();
+        this.draw();
+
+        //this.drawCurveSegments();
 
 
     }
@@ -87,8 +93,25 @@ class Knotwork {
         }
     }
 
-    drawCurves() {
-        var knot = this.knots[0];
-        knot.drawCurves(0, true);
+    overUnderCurves() {
+        for (var i=0; i<this.knots.length; i++) {
+            this.knots[i].overUnderCurves();
+        }
+
+        console.log(this.knots[0], this.knots[1]);
+    }
+
+    draw() {
+        var overGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        overGroup.setAttribute("id", "over");
+        var underGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        underGroup.setAttribute("id", "under");
+
+        this.destSvg.appendChild(underGroup);
+        this.destSvg.appendChild(overGroup);
+
+        for (var i=0; i<this.knots.length; i++) {
+            this.knots[i].draw();
+        }
     }
 }
