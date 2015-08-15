@@ -33,7 +33,7 @@ class Knot {
                 };
             }
 
-            var points = newPaths[pathIndex].points
+            var points = newPaths[pathIndex].points;
             for (var i = fromLength; i < toLength; i += this.sampleInterval) {
                 points.push(this.path.getPointAtLength(i).x);
                 points.push(this.path.getPointAtLength(i).y);
@@ -42,16 +42,19 @@ class Knot {
             points.push(this.path.getPointAtLength(toLength).y);
             pathIndex++;
             fromLength = toLength;
-            toLength = j===this.intersections.length-1 ? this.path.getTotalLength() : (this.intersections[j].distance1 + this.intersections[j+1].distance2)/2;
+            toLength = j===this.intersections.length-1 ? this.path.getTotalLength() : (this.intersections[j].distance1 + this.intersections[j+1].distance1)/2;
         }
-        newPaths[pathIndex] = {
-            intersection: this.intersections[this.intersections.length-1],
-            points: []
-        };
-        for (var i = fromLength; i < toLength; i += this.sampleInterval) {
-            newPaths[pathIndex].points.push(this.path.getPointAtLength(i).x);
-            newPaths[pathIndex].points.push(this.path.getPointAtLength(i).y);
+
+        pathIndex = 0;
+        var points = newPaths[pathIndex].points;
+        for (var i = toLength; i > fromLength; i -= this.sampleInterval) {
+            points.unshift(this.path.getPointAtLength(i).y);
+            points.unshift(this.path.getPointAtLength(i).x);
+
         }
+        points.unshift(this.path.getPointAtLength(fromLength).y);
+        points.unshift(this.path.getPointAtLength(fromLength).x);
+
         this.pathSegments = newPaths;
 
 
@@ -209,6 +212,7 @@ class Knot {
         var color = Gordium.randomColor();
         for(var x=0; x<this.pathSegments.length; x++) {
             var polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            polyLine.setAttribute("id", "path-segment-"+x)
             polyLine.setAttribute("points", this.pathSegments[x].points);
             polyLine.setAttribute("fill", "none");
             polyLine.setAttribute("stroke-width", "10");
@@ -240,8 +244,11 @@ class Knot {
             var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             circle.setAttribute("r", 5);
             circle.setAttribute("fill", Gordium.randomColor());
-            circle.setAttribute("cx", intersection.x);
-            circle.setAttribute("cy", intersection.y);
+            var point = this.path.getPointAtLength(intersection.distance1);
+            circle.setAttribute("cx", point.x);
+            circle.setAttribute("cy", point.y);
+//            circle.setAttribute("cx", intersection.x);
+//            circle.setAttribute("cy", intersection.y);
 
             // TODO global debug svg
             document.getElementsByTagName("svg")[1].appendChild(circle);

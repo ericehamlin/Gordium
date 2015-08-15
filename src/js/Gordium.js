@@ -87,7 +87,6 @@ class Gordium {
 
                 Gordium.drawSegment(points[j], points[j+1]);
 
-
                 // see if path intersects itself
                 for (var k = j + 1; k < points.length - 1; k++) {
                     var segment2 = Gordium.defineSegment(points[k], points[k+1]);
@@ -125,7 +124,7 @@ class Gordium {
             }
 
             knot.intersections.sort(function(a, b) {
-                    return a.distance1 > b.distance1;
+                    return a.distance1 > b.distance1 ? 1 : -1;
                 });
         }
     }
