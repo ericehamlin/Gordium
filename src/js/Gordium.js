@@ -60,9 +60,8 @@ class Gordium {
         points.push({
             x: path.getPointAtLength(toLength).x,
             y: path.getPointAtLength(toLength).y,
-            pathLength: i
+            pathLength: toLength
         });
-
         return points;
     }
 
@@ -113,7 +112,7 @@ class Gordium {
                         var intersection = Gordium.linesIntersect(segment1, segment2);
                         if (intersection) {
                             var distance1 = (j * sampleInterval)  + (intersection.segment1Percent * sampleInterval / 100);
-                            var distance2 = (x * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
+                            var distance2 = (y * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
                             let newIntersection = new Intersection(knot, distance1, knot2, distance2, intersection.x, intersection.y);
                             let newIntersection2 = new Intersection(knot2, distance2, knot, distance1, intersection.x, intersection.y);
                             knot.intersections.push(newIntersection);
@@ -181,6 +180,7 @@ class Gordium {
             minX2 = Math.min(segment2.x1, segment2.x2);
 
         if (x >= maxX1 || x >= maxX2 || x <= minX1 || x <= minX2) return null;
+        console.log(segment1, segment2, m1, m2, x, y);
         return {
             x:x,
             y:y,
