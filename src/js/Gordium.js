@@ -39,8 +39,18 @@ class Gordium {
 
     /**
      * Approximate curves with Polylines
-     * TODO: If straight lines, don't approximate. Use lines
-     * TODO: If there are corners, keep them
+     * TODO-XXX: If straight lines, don't approximate. Use lines
+     * TODO-XXX: If there are corners, keep them
+     *
+     * logic -- is third point directly inbetween first 2
+     * is C between B and A?
+     *
+     * A   B    vs.     A-C-B
+     *  \ /
+     *  C
+     *
+     *  This cries out for a visual programming [environment/language] as per Martin Fowler
+     *  Fuckin' Visi-Calc is O.G. in this hood -- would say my internal ur-geek
      *
      * @param path
      * @param fromLength
@@ -51,11 +61,19 @@ class Gordium {
     static getPointsFromPath(path, fromLength, toLength, sampleInterval) {
         let points = [];
         for (var i=fromLength ; i<toLength ; i+=sampleInterval) {
+            var point = path.getPointAtLength(i),
+                currentSegmentIndex = path.getPathSegAtLength(i),
+                nextSegmentIndex = path.getPathSegAtLength(i + sampleInterval);
+
             points.push({
-                x: path.getPointAtLength(i).x,
-                y: path.getPointAtLength(i).y,
+                x: point.x,
+                y: point.y,
                 pathLength: i
             });
+
+            if (currentSegmentIndex !== nextSegmentIndex) {
+                console.log(currentSegmentIndex, nextSegmentIndex)
+            }
         }
         points.push({
             x: path.getPointAtLength(toLength).x,
