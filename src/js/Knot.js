@@ -156,55 +156,55 @@ class Knot {
         }
     }
 
-    xoverUnderCurves(intersectionIndex, over=true) {
-        var startIntersectionIndex = intersectionIndex;
-        var startOver = over;
-
-        function indexOfIntersectionOnOtherKnot(knot, x, y) {
-            for (var i=0; i<knot.intersections.length; i++) {
-                var intersection = knot.intersections[i];
-                if (intersection.x == x && intersection.y == y) {
-                    return i;
-                }
-            }
-        }
-
-        var intersection = this.intersections[intersectionIndex];
-        if (intersection.over !== undefined) {
-            return;
-        }
-        intersection.over = over;
-        over = !over;
-
-        while(intersectionIndex > 0) {
-            var intersection = this.intersections[--intersectionIndex];
-            if (intersection.over !== undefined) {
-                break;
-            }
-            intersection.over = over;
-            over = !over;
-
-            /*if (intersection.knot1 !== intersection.knot2) {
-                intersection.knot2.overUnderCurves(indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y), over);
-            }*/
-        }
-        over = !startOver;
-        intersectionIndex = startIntersectionIndex;
-
-        while(intersectionIndex < this.intersections.length-1) {
-            var intersection = this.intersections[++intersectionIndex];
-            if (intersection.over !== undefined) {
-                break;
-            }
-            intersection.over = over;
-            over = !over;
-
-            /*if (intersection.knot1 !== intersection.knot2) {
-                intersection.knot2.overUnderCurves(indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y), over);
-            }*/
-        }
-
-    }
+//    xoverUnderCurves(intersectionIndex, over=true) {
+//        var startIntersectionIndex = intersectionIndex;
+//        var startOver = over;
+//
+//        function indexOfIntersectionOnOtherKnot(knot, x, y) {
+//            for (var i=0; i<knot.intersections.length; i++) {
+//                var intersection = knot.intersections[i];
+//                if (intersection.x == x && intersection.y == y) {
+//                    return i;
+//                }
+//            }
+//        }
+//
+//        var intersection = this.intersections[intersectionIndex];
+//        if (intersection.over !== undefined) {
+//            return;
+//        }
+//        intersection.over = over;
+//        over = !over;
+//
+//        while(intersectionIndex > 0) {
+//            var intersection = this.intersections[--intersectionIndex];
+//            if (intersection.over !== undefined) {
+//                break;
+//            }
+//            intersection.over = over;
+//            over = !over;
+//
+//            /*if (intersection.knot1 !== intersection.knot2) {
+//                intersection.knot2.overUnderCurves(indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y), over);
+//            }*/
+//        }
+//        over = !startOver;
+//        intersectionIndex = startIntersectionIndex;
+//
+//        while(intersectionIndex < this.intersections.length-1) {
+//            var intersection = this.intersections[++intersectionIndex];
+//            if (intersection.over !== undefined) {
+//                break;
+//            }
+//            intersection.over = over;
+//            over = !over;
+//
+//            /*if (intersection.knot1 !== intersection.knot2) {
+//                intersection.knot2.overUnderCurves(indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y), over);
+//            }*/
+//        }
+//
+//    }
 
     draw() {
         var overGroup = document.getElementById("over");
@@ -215,23 +215,19 @@ class Knot {
             polyLine.setAttribute("id", "path-segment-"+x)
             polyLine.setAttribute("points", this.pathSegments[x].points);
             polyLine.setAttribute("fill", "none");
-            polyLine.setAttribute("stroke-width", "10");
+            polyLine.setAttribute("stroke-width", "15");
             polyLine.setAttribute("stroke-linejoin", "round");
 
-            color = Gordium.randomColor();
+            //color = Gordium.randomColor();
             polyLine.setAttribute("stroke", color);
             if (this.pathSegments[x].intersection.over) {
-                console.log("over");
+                console.debug("over");
                 overGroup.appendChild(polyLine);
-                //polyLine.setAttribute("stroke", "red");
             }
             else {
-                console.log("under");
+                console.debug("under");
                 underGroup.appendChild(polyLine);
-                //polyLine.setAttribute("stroke", "blue");
             }
-            //this.destSvg.appendChild(polyLine);
-
         }
     }
 

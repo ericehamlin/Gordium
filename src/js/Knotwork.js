@@ -82,12 +82,6 @@ class Knotwork {
         for (var i = 0; i < this.knots.length; i++) {
             this.knots[i].drawIntersections();
         }
-//        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-//        circle.setAttribute("r", 20);
-//        circle.setAttribute("fill", Gordium.randomColor());
-//        circle.setAttribute("cx", 88.916);
-//        circle.setAttribute("cy", 126.704);
-//        document.getElementsByTagName("svg")[1].appendChild(circle);
     }
 
     /**
