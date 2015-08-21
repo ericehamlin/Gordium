@@ -15,8 +15,6 @@ class Knot {
 
     /**
      * Break curve into curve segments on either side of intersections
-     * TODO I think this is inaccurate. Curves are not being broken where we would like
-     * Maybe it's the distances on the intersections
      */
     segmentCurves() {
         var newPaths = [];
@@ -212,7 +210,7 @@ class Knot {
         var color = Gordium.randomColor();
         for(var x=0; x<this.pathSegments.length; x++) {
             var polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-            polyLine.setAttribute("id", "path-segment-"+x)
+            polyLine.setAttribute("id", "path-segment-"+x);
             polyLine.setAttribute("points", this.pathSegments[x].points);
             polyLine.setAttribute("fill", "none");
             polyLine.setAttribute("stroke-width", "15");
@@ -235,7 +233,6 @@ class Knot {
      * TODO debug only
      */
     drawIntersections() {
-
         for (var j = 0; j < this.intersections.length; j++) {
             var intersection = this.intersections[j];
             var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
