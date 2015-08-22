@@ -22,6 +22,8 @@ class Knot {
         var fromLength = 0;
         var toLength = this.intersections[0].distance1/2;
 
+        console.log(this.path.pathSegList);
+
         for (var j=0; j<this.intersections.length; j++) {
             if (newPaths[pathIndex] == undefined) {
                 newPaths[pathIndex] = {
@@ -32,6 +34,36 @@ class Knot {
 
             var points = newPaths[pathIndex].points;
             for (var i = fromLength; i < toLength; i += this.sampleInterval) {
+
+                var currentSegmentIndex = this.path.getPathSegAtLength(i),
+                    nextSegmentIndex = i + this.sampleInterval > toLength ?
+                            this.path.getPathSegAtLength(toLength) :
+                            this.path.getPathSegAtLength(i+this.sampleInterval);
+
+                // if we're crossing to the next segment
+                if (currentSegmentIndex !== nextSegmentIndex) {
+
+                    var previousSegmentIndex = currentSegmentIndex-1,
+                        previousSegment = this.path.pathSegList[previousSegmentIndex],
+                        currentSegment = this.path.pathSegList[currentSegmentIndex],
+                        nextSegment = this.path.pathSegList[nextSegmentIndex];
+                    // if the next segment is a line
+                    // if the segment length ends before the line does
+                    // segment to full length
+                    // else
+                    // entire line and push fromLength to end of line
+
+                    // check for corner.
+                    if (previousSegment) { // if this is not the first segment
+                        let angle = Gordium.getAngleBetweenSegments(previousSegment, currentSegment, nextSegment);
+                        if (Gordium.isAcuteAngle(angle)) {
+                            var coords = Gordium.calculateAbsoluteValueOfSegmentEnd(this.path, currentSegmentIndex);
+                            points.push(coords.x);
+                            points.push(coords.y);
+                        }
+
+                    }
+                }
                 points.push(this.path.getPointAtLength(i).x);
                 points.push(this.path.getPointAtLength(i).y);
             }
@@ -213,7 +245,7 @@ class Knot {
             polyLine.setAttribute("id", "path-segment-"+x);
             polyLine.setAttribute("points", this.pathSegments[x].points);
             polyLine.setAttribute("fill", "none");
-            polyLine.setAttribute("stroke-width", "15");
+            polyLine.setAttribute("stroke-width", "5");
             polyLine.setAttribute("stroke-linejoin", "round");
 
             //color = Gordium.randomColor();

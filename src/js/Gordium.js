@@ -1,8 +1,10 @@
 class Gordium {
 
+
     /**
      *
      * @param filename
+     * @returns {Promise}
      */
     static loadSvg(filename) {
 
@@ -25,6 +27,74 @@ class Gordium {
             }
         });
         return promise;
+    }
+
+    /**
+     *
+     * @param segment
+     * @returns {boolean}
+     */
+    static pathSegmentIsAbsolute(segment) {
+        var type = segment.pathSegType;
+        return     type === SegmentTypes.PATHSEG_MOVETO_ABS
+                || type === SegmentTypes.PATHSEG_LINETO_ABS
+                || type === SegmentTypes.PATHSEG_CURVETO_CUBIC_ABS
+                || type === SegmentTypes.PATHSEG_CURVETO_QUADRATIC_ABS
+                || type === SegmentTypes.PATHSEG_ARC_ABS
+                || type === SegmentTypes.PATHSEG_LINETO_HORIZONTAL_ABS
+                || type === SegmentTypes.PATHSEG_LINETO_VERTICAL_ABS
+                || type === SegmentTypes.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS
+                || type === SegmentTypes.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS;
+    }
+
+    static calculateAbsoluteValueOfSegmentEnd(path, segmentIndex) {
+        let coords = {x:0, y:0},
+                segments = path.pathSegList;
+
+        for (let i=0; i<segmentIndex+1; i++) {
+            if (Gordium.pathSegmentIsAbsolute(segments[i])) {
+                coords.x = segments[i].x;
+                coords.y = segments[i].y;
+            }
+            else {
+                coords.x += segments[i].x;
+                coords.y += segments[i].y;
+            }
+        }
+
+        return coords
+    }
+
+    /**
+     *
+     * @param segment1
+     * @param segment2
+     * @param segment3
+     * @returns {number}
+     */
+    static getAngleBetweenSegments(segment1, segment2, segment3){
+        let x1 = segment2.x - segment1.x,
+            x2 = segment3.x - segment2.x,
+            y1 = segment2.y - segment1.y,
+            y2 = segment3.y - segment2.y;
+
+        let angle = Math.acos(
+                ((x1 * x2) + (y1 * y2))
+                /
+                (Math.sqrt((x1 * x1) + (y1 * y1)) * Math.sqrt((x2 * x2) + (y2 * y2)))
+        );
+
+        return angle;
+    }
+
+    /**
+     *
+     * @param {number} angle (in radians)
+     * @returns {boolean}
+     */
+    static isAcuteAngle(angle) {
+        let maxAngle = Math.PI / 2;
+        return Math.abs(angle) < maxAngle;
     }
 
     /**
@@ -62,18 +132,21 @@ class Gordium {
         let points = [];
         for (var i=fromLength ; i<toLength ; i+=sampleInterval) {
             var point = path.getPointAtLength(i),
-                currentSegmentIndex = path.getPathSegAtLength(i),
-                nextSegmentIndex = path.getPathSegAtLength(i + sampleInterval);
+                    currentSegmentIndex = path.getPathSegAtLength(i),
+                    nextSegmentIndex = path.getPathSegAtLength(i + sampleInterval);
+
+            // this is probably not necessary here, only once we're drawing the final
+//            if (currentSegmentIndex !== nextSegmentIndex) {
+//                var segment1 = path.pathSegList[currentSegmentIndex];
+//                var segment2 = path.pathSegList[nextSegmentIndex];
+//                console.log(segment1, segment2)
+//            }
 
             points.push({
                 x: point.x,
                 y: point.y,
                 pathLength: i
             });
-
-            if (currentSegmentIndex !== nextSegmentIndex) {
-                console.log(currentSegmentIndex, nextSegmentIndex)
-            }
         }
         points.push({
             x: path.getPointAtLength(toLength).x,
@@ -198,7 +271,7 @@ class Gordium {
             minX2 = Math.min(segment2.x1, segment2.x2);
 
         if (x >= maxX1 || x >= maxX2 || x <= minX1 || x <= minX2) return null;
-        console.log(segment1, segment2, m1, m2, x, y);
+
         return {
             x:x,
             y:y,
