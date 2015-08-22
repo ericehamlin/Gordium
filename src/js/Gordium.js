@@ -66,7 +66,7 @@ class Gordium {
     }
 
     /**
-     *
+     * TODO don't use full segment length -- get angle close to point
      * @param segment1
      * @param segment2
      * @param segment3

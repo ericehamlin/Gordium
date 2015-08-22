@@ -5,13 +5,14 @@ class Knotwork {
      * @param filename
      * @param srcSvg
      */
-    constructor(filename=null, srcSvg=null, sampleInterval=10) {
+    constructor(filename=null, srcSvg=null, sampleInterval=10, config=[]) {
         let self = this;
 
         this.filename = filename;
         this.srcSvg = srcSvg;
         this.knots = [];
         this.sampleInterval = sampleInterval;
+        this.config = config;
 
         this.destSvg = document.getElementById("dest-svg");
         this.showSvg = document.getElementById("show-svg");
@@ -62,7 +63,7 @@ class Knotwork {
     getPathsFromSvg() {
         var paths = Gordium.getPathsFromSvg(this.srcSvg);
         for (var i = 0; i < paths.length; i++) {
-            this.knots.push(new Knot(paths[i], this.sampleInterval));
+            this.knots.push(new Knot(paths[i], this.sampleInterval, this.config[i] ? this.config[i] : undefined));
         }
     }
 

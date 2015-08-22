@@ -1,12 +1,13 @@
 class Knot {
 
-    constructor(path, sampleInterval=40) {
+    constructor(path, sampleInterval=40, config={}) {
 
         this.sampleInterval = sampleInterval;
         this.path = path;
         this.pathSegments = [];
         this.points = [];
         this.intersections = [];
+        this.config = config;
 
         this.destSvg = document.getElementById("dest-svg");
 
@@ -237,15 +238,15 @@ class Knot {
 //    }
 
     draw() {
-        var overGroup = document.getElementById("over");
-        var underGroup = document.getElementById("under");
-        var color = Gordium.randomColor();
+        let overGroup = document.getElementById("over");
+        let underGroup = document.getElementById("under");
+        let color = Gordium.randomColor();
         for(var x=0; x<this.pathSegments.length; x++) {
-            var polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            let polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
             polyLine.setAttribute("id", "path-segment-"+x);
             polyLine.setAttribute("points", this.pathSegments[x].points);
             polyLine.setAttribute("fill", "none");
-            polyLine.setAttribute("stroke-width", "5");
+            polyLine.setAttribute("stroke-width", this.config['stroke-width'] ? this.config['stroke-width'] : "10");
             polyLine.setAttribute("stroke-linejoin", "round");
 
             //color = Gordium.randomColor();
