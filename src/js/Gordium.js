@@ -109,18 +109,6 @@ class Gordium {
 
     /**
      * Approximate curves with Polylines
-     * TODO-XXX: If straight lines, don't approximate. Use lines
-     * TODO-XXX: If there are corners, keep them
-     *
-     * logic -- is third point directly inbetween first 2
-     * is C between B and A?
-     *
-     * A   B    vs.     A-C-B
-     *  \ /
-     *  C
-     *
-     *  This cries out for a visual programming [environment/language] as per Martin Fowler
-     *  Fuckin' Visi-Calc is O.G. in this hood -- would say my internal ur-geek
      *
      * @param path
      * @param fromLength
@@ -131,16 +119,7 @@ class Gordium {
     static getPointsFromPath(path, fromLength, toLength, sampleInterval) {
         let points = [];
         for (var i=fromLength ; i<toLength ; i+=sampleInterval) {
-            var point = path.getPointAtLength(i),
-                    currentSegmentIndex = path.getPathSegAtLength(i),
-                    nextSegmentIndex = path.getPathSegAtLength(i + sampleInterval);
-
-            // this is probably not necessary here, only once we're drawing the final
-//            if (currentSegmentIndex !== nextSegmentIndex) {
-//                var segment1 = path.pathSegList[currentSegmentIndex];
-//                var segment2 = path.pathSegList[nextSegmentIndex];
-//                console.log(segment1, segment2)
-//            }
+            let point = path.getPointAtLength(i);
 
             points.push({
                 x: point.x,
@@ -175,7 +154,7 @@ class Gordium {
             for (var j = 0; j < points.length - 1; j++) {
                 var segment1 = Gordium.defineSegment(points[j], points[j+1]);
 
-                Gordium.drawSegment(points[j], points[j+1]);
+                Gordium.drawDebugSegment(points[j], points[j+1]);
 
                 // see if path intersects itself
                 for (var k = j + 1; k < points.length - 1; k++) {
@@ -219,25 +198,6 @@ class Gordium {
         }
     }
 
-    static drawSegment(point1, point2) {
-        var colors = [
-            "#cc0000",
-            "#00cc00",
-            "#0000cc",
-            "#990066"
-        ];
-        var currentColor = Math.round(Math.random() * 3);
-        var showSvg = document.getElementById("show-svg");
-        var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", point1.x);
-        line.setAttribute("x2", point2.x);
-        line.setAttribute("y1", point1.y);
-        line.setAttribute("y2", point2.y);
-        line.setAttribute("stroke", colors[currentColor]);
-        document.getElementsByTagName("svg")[1].appendChild(line);
-
-    }
-
     static defineSegment(point1, point2) {
         return {
             x1: point1.x,
@@ -247,23 +207,23 @@ class Gordium {
         };
     }
 
+    /**
+     *
+     * @param segment1
+     * @param segment2
+     * @returns {*}
+     */
     static linesIntersect(segment1, segment2) {
 
-        var m1 = Gordium.getSlope(segment1);
-        var m2 = Gordium.getSlope(segment2);
+        let m1 = Gordium.getSlope(segment1);
+        let m2 = Gordium.getSlope(segment2);
 
         if (m1==m2) return null; // lines are parallel
 
 
-        var x = (segment2.y1 - segment1.y1 + (m1 * segment1.x1) - (m2 * segment2.x1)) / (m1-m2);
-        var y = (m1*(x-segment1.x1))+segment1.y1;
+        let x = (segment2.y1 - segment1.y1 + (m1 * segment1.x1) - (m2 * segment2.x1)) / (m1-m2);
+        let y = (m1*(x-segment1.x1))+segment1.y1;
 
-
-        /*var maxX = Math.min (Math.max(segment1.x1, segment1.x2), Math.max(segment2.x1, segment2.x2))-1;
-        var minX = Math.max (Math.min(segment1.x1, segment1.x2), Math.min(segment2.x1, segment2.x2))+1;
-
-        if (x < minX || x > maxX) return null; // intersection is out of the range of the segment
-*/
 
         let maxX1 = Math.max(segment1.x1, segment1.x2),
             minX1 = Math.min(segment1.x1, segment1.x2),
@@ -280,14 +240,16 @@ class Gordium {
         };
     }
 
+    /**
+     *
+     * @param segment
+     * @returns {number}
+     */
     static getSlope(segment) {
         var slope = (segment.y2 - segment.y1) / (segment.x2 - segment.x1);
         return slope;
     }
 
-    static getSubpath(path, from, to) {
-        return Raphael.getSubpath(path, from, to);
-    }
 
     static randomInteger(max) {
         return Math.round(Math.random() * max);
@@ -295,5 +257,22 @@ class Gordium {
 
     static randomColor() {
         return "rgb(" + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + ")";
+    }
+
+    /**
+     * TODO debugOnly
+     * @param point1
+     * @param point2
+     */
+    static drawDebugSegment(point1, point2) {
+        var currentColor = Gordium.randomColor();
+        var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", point1.x);
+        line.setAttribute("x2", point2.x);
+        line.setAttribute("y1", point1.y);
+        line.setAttribute("y2", point2.y);
+        line.setAttribute("stroke", currentColor);
+        document.getElementsByTagName("svg")[1].appendChild(line);
+
     }
 }

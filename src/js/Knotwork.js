@@ -5,7 +5,7 @@ class Knotwork {
      * @param filename
      * @param srcSvg
      */
-    constructor(filename=null, srcSvg=null, sampleInterval=10, config=[]) {
+    constructor(filename=null, srcSvg=null, sampleInterval=10, config={}) {
         let self = this;
 
         this.filename = filename;
@@ -40,17 +40,16 @@ class Knotwork {
     processKnotwork() {
         this.getPathsFromSvg();
         Gordium.findIntersectionsForKnots(this.knots, this.sampleInterval);
-        this.drawIntersections();
+
+        this.drawIntersections(); // debug
+
         this.segmentCurves();
 
-        // find Over/Under for path segments
-        this.overUnderCurves();
-
         // find curves from path segments
-        //
 
-        // animate each curve
-        this.draw();
+        this.overUnderCurves(); // find Over/Under for path segments
+
+        this.draw(); // animate each curve
 
         //this.drawCurveSegments();
 
@@ -63,7 +62,7 @@ class Knotwork {
     getPathsFromSvg() {
         var paths = Gordium.getPathsFromSvg(this.srcSvg);
         for (var i = 0; i < paths.length; i++) {
-            this.knots.push(new Knot(paths[i], this.sampleInterval, this.config[i] ? this.config[i] : undefined));
+            this.knots.push(new Knot(paths[i], this.sampleInterval, this.config.knots[i] ? this.config.knots[i] : undefined));
         }
     }
 
@@ -98,8 +97,6 @@ class Knotwork {
         for (var i=0; i<this.knots.length; i++) {
             this.knots[i].overUnderCurves();
         }
-
-        console.log(this.knots[0], this.knots[1]);
     }
 
     draw() {
