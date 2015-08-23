@@ -255,3 +255,5 @@ class Knot {
         }
     }
 }
+
+Gordium.Knot = Knot;

@@ -27,7 +27,7 @@ gulp.task('default', ['clean'], function () {
 });
 
 gulp.task('build', function () {
-    return gulp.src('src/**/*.js')
+    return gulp.src(['src/js/Gordium.js', 'src/**/*.js'])
             .pipe(sourcemaps.init())
             .pipe(babel())
             .pipe(concat('gordium.js'))

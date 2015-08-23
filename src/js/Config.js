@@ -1,14 +1,17 @@
 class Config {
 
-    constructor(defaultConfig = {}, config = {}) {
-        this.config = defaultConfig;
+    constructor(config = {}) {
+        this.sampleInterval = 10,
+        this.knots = []
 
-        overrideProperties(defaultConfig, config);
+        this.overrideProperties(config);
     }
 
-    overrideProperties(defaultConfig, config) {
+    overrideProperties(config) {
         for (let key in config) {
-            this.config[key] = config[key];
+            this[key] = config[key];
         }
     }
 }
+
+Gordium.Config = Config;

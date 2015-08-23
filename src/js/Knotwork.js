@@ -14,7 +14,7 @@ class Knotwork {
         this.srcSvg = srcSvg;
         this.knots = [];
         this.sampleInterval = sampleInterval;
-        this.config = config;
+        this.config = new Gordium.Config(config);
 
         this.destSvg = document.getElementById("dest-svg");
         this.showSvg = document.getElementById("show-svg");
@@ -65,7 +65,7 @@ class Knotwork {
     getPathsFromSvg() {
         var paths = Gordium.getPathsFromSvg(this.srcSvg);
         for (var i = 0; i < paths.length; i++) {
-            this.knots.push(new Knot(paths[i], this.sampleInterval, this.config.knots[i] ? this.config.knots[i] : undefined));
+            this.knots.push(new Gordium.Knot(paths[i], this.sampleInterval, this.config.knots[i] ? this.config.knots[i] : undefined));
         }
     }
 
@@ -116,3 +116,5 @@ class Knotwork {
         }
     }
 }
+
+Gordium.Knotwork = Knotwork;
