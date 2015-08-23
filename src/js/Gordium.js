@@ -1,3 +1,15 @@
+/**
+ * TODO:
+ * save existing curved segments instead of breaking them into polylines
+ * change linear paths to shapes
+ * increase length of paths just slightly so that they overlap
+ * get corners at beginning and end of paths
+ * default config for individual knots
+ * match config to knots
+ *
+ * strategy for how to animate
+ */
+
 let Gordium = {
 
     /**
