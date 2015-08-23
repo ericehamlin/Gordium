@@ -7,8 +7,8 @@ let Gordium = {
      */
     loadSvg: function(filename) {
 
-        var request = new XMLHttpRequest();
-        var promise = new Promise(function (resolve, reject) {
+        let request = new XMLHttpRequest();
+        let promise = new Promise(function (resolve, reject) {
             request.open('GET', filename, true);
             request.onreadystatechange = onResponse;
             request.send(null);
@@ -18,8 +18,8 @@ let Gordium = {
                     if (request.status !== 200) {
                         reject("couldn't load file")
                     }
-                    var element = document.createElement("div");
-                    var svgXml = request.responseText.replace(/^(.|\n|\r)*?(<svg)/im, "$2");
+                    let element = document.createElement("div");
+                    let svgXml = request.responseText.replace(/^(.|\n|\r)*?(<svg)/im, "$2");
                     element.insertAdjacentHTML("afterbegin", svgXml);
                     resolve(element);
                 }
@@ -34,7 +34,7 @@ let Gordium = {
      * @returns {boolean}
      */
     pathSegmentIsAbsolute: function(segment) {
-        var type = segment.pathSegType;
+        let type = segment.pathSegType;
         return     type === Gordium.SegmentTypes.PATHSEG_MOVETO_ABS
                 || type === Gordium.SegmentTypes.PATHSEG_LINETO_ABS
                 || type === Gordium.SegmentTypes.PATHSEG_CURVETO_CUBIC_ABS
@@ -123,7 +123,7 @@ let Gordium = {
      */
     getPointsFromPath: function(path, fromLength, toLength, sampleInterval) {
         let points = [];
-        for (var i=fromLength ; i<toLength ; i+=sampleInterval) {
+        for (let i=fromLength ; i<toLength ; i+=sampleInterval) {
             let point = path.getPointAtLength(i);
 
             points.push({
@@ -152,22 +152,22 @@ let Gordium = {
      * y = m(x-Px)+Py  (Px and Py are x and y of a point on line)
      */
     findIntersectionsForKnots: function(knots, sampleInterval=10) {
-        for (var i = 0; i < knots.length; i++) {
+        for (let i = 0; i < knots.length; i++) {
             let knot = knots[i],
                 points = knot.points;
 
-            for (var j = 0; j < points.length - 1; j++) {
-                var segment1 = Gordium.defineSegment(points[j], points[j+1]);
+            for (let j = 0; j < points.length - 1; j++) {
+                let segment1 = Gordium.defineSegment(points[j], points[j+1]);
 
                 Gordium.drawDebugSegment(points[j], points[j+1]);
 
                 // see if path intersects itself
-                for (var k = j + 1; k < points.length - 1; k++) {
-                    var segment2 = Gordium.defineSegment(points[k], points[k+1]);
-                    var intersection = Gordium.linesIntersect(segment1, segment2);
+                for (let k = j + 1; k < points.length - 1; k++) {
+                    let segment2 = Gordium.defineSegment(points[k], points[k+1]);
+                    let intersection = Gordium.linesIntersect(segment1, segment2);
                     if (intersection) {
-                        var distance1 = (j * sampleInterval)  + (intersection.segment1Percent * sampleInterval / 100);
-                        var distance2 = (k * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
+                        let distance1 = (j * sampleInterval)  + (intersection.segment1Percent * sampleInterval / 100);
+                        let distance2 = (k * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
 
                         let newIntersection = new Gordium.Intersection(knot, distance1, knot, distance2, intersection.x, intersection.y);
                         let newIntersection2 = new Gordium.Intersection(knot, distance2, knot, distance1,  intersection.x, intersection.y);
@@ -178,16 +178,16 @@ let Gordium = {
                 }
 
 
-                for (var x = i + 1; x < knots.length; x++) {
+                for (let x = i + 1; x < knots.length; x++) {
                     let knot2 = knots[x],
                         points2 = knot2.points;
 
-                    for (var y = 0; y < points2.length - 1; y++) {
-                        var segment2 = Gordium.defineSegment(points2[y], points2[y+1]);
-                        var intersection = Gordium.linesIntersect(segment1, segment2);
+                    for (let y = 0; y < points2.length - 1; y++) {
+                        let segment2 = Gordium.defineSegment(points2[y], points2[y+1]);
+                        let intersection = Gordium.linesIntersect(segment1, segment2);
                         if (intersection) {
-                            var distance1 = (j * sampleInterval)  + (intersection.segment1Percent * sampleInterval / 100);
-                            var distance2 = (y * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
+                            let distance1 = (j * sampleInterval)  + (intersection.segment1Percent * sampleInterval / 100);
+                            let distance2 = (y * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
                             let newIntersection = new Gordium.Intersection(knot, distance1, knot2, distance2, intersection.x, intersection.y);
                             let newIntersection2 = new Gordium.Intersection(knot2, distance2, knot, distance1, intersection.x, intersection.y);
                             knot.intersections.push(newIntersection);
@@ -257,7 +257,7 @@ let Gordium = {
      * @returns {number}
      */
     getSlope: function(segment) {
-        var slope = (segment.y2 - segment.y1) / (segment.x2 - segment.x1);
+        let slope = (segment.y2 - segment.y1) / (segment.x2 - segment.x1);
         return slope;
     },
 
@@ -276,8 +276,8 @@ let Gordium = {
      * @param point2
      */
     drawDebugSegment: function(point1, point2) {
-        var currentColor = Gordium.randomColor();
-        var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        let currentColor = Gordium.randomColor();
+        let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
         line.setAttribute("x1", point1.x);
         line.setAttribute("x2", point2.x);
         line.setAttribute("y1", point1.y);

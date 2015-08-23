@@ -66,8 +66,8 @@
          *
          */
         getPathsFromSvg() {
-            var paths = Gordium.getPathsFromSvg(this.srcSvg);
-            for (var i = 0; i < paths.length; i++) {
+            let paths = Gordium.getPathsFromSvg(this.srcSvg);
+            for (let i = 0; i < paths.length; i++) {
                 this.knots.push(new Gordium.Knot(paths[i], this.sampleInterval, this.config.knots[i] ? this.config.knots[i] : undefined));
             }
         }
@@ -76,27 +76,27 @@
          * Break curves into curve segments on either side of intersections
          */
         segmentCurves() {
-            for (var i = 0; i < this.knots.length; i++) {
+            for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].segmentCurves();
             }
         }
 
         overUnderCurves() {
-            for (var i = 0; i < this.knots.length; i++) {
+            for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].overUnderCurves();
             }
         }
 
         draw() {
-            var overGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            let overGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
             overGroup.setAttribute("id", "over");
-            var underGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            let underGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
             underGroup.setAttribute("id", "under");
 
             this.destSvg.appendChild(underGroup);
             this.destSvg.appendChild(overGroup);
 
-            for (var i = 0; i < this.knots.length; i++) {
+            for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].draw();
             }
         }
@@ -105,7 +105,7 @@
          * TODO debug only
          */
         drawDebugIntersections() {
-            for (var i = 0; i < this.knots.length; i++) {
+            for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].drawDebugIntersections();
             }
         }
@@ -114,7 +114,7 @@
          * TODO debug only
          */
         drawDebugCurveSegments() {
-            for (var i = 0; i < this.knots.length; i++) {
+            for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].drawDebugCurveSegments();
             }
         }

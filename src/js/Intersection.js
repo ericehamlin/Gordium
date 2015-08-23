@@ -22,6 +22,6 @@
     }
 
     Gordium.Intersection = Intersection;
-    
+
 })(Gordium);
 

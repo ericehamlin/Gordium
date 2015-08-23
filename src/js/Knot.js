@@ -26,12 +26,12 @@
          * Break curve into curve segments on either side of intersections
          */
         segmentCurves() {
-            var newPaths = [];
-            var pathIndex = 0;
-            var fromLength = 0;
-            var toLength = this.intersections[0].distance1 / 2;
+            let newPaths = [];
+            let pathIndex = 0;
+            let fromLength = 0;
+            let toLength = this.intersections[0].distance1 / 2;
 
-            for (var j = 0; j < this.intersections.length; j++) {
+            for (let j = 0; j < this.intersections.length; j++) {
                 if (newPaths[pathIndex] == undefined) {
                     newPaths[pathIndex] = {
                         intersection: this.intersections[j],
@@ -39,10 +39,10 @@
                     };
                 }
 
-                var points = newPaths[pathIndex].points;
-                for (var i = fromLength; i < toLength; i += this.sampleInterval) {
+                let points = newPaths[pathIndex].points;
+                for (let i = fromLength; i < toLength; i += this.sampleInterval) {
 
-                    var currentSegmentIndex = this.path.getPathSegAtLength(i),
+                    let currentSegmentIndex = this.path.getPathSegAtLength(i),
                             nextSegmentIndex = i + this.sampleInterval > toLength ?
                                     this.path.getPathSegAtLength(toLength) :
                                     this.path.getPathSegAtLength(i + this.sampleInterval);
@@ -50,7 +50,7 @@
                     // if we're crossing to the next segment
                     if (currentSegmentIndex !== nextSegmentIndex) {
 
-                        var previousSegmentIndex = currentSegmentIndex - 1,
+                        let previousSegmentIndex = currentSegmentIndex - 1,
                                 previousSegment = this.path.pathSegList[previousSegmentIndex],
                                 currentSegment = this.path.pathSegList[currentSegmentIndex],
                                 nextSegment = this.path.pathSegList[nextSegmentIndex];
@@ -64,7 +64,7 @@
                         if (previousSegment) { // if this is not the first segment
                             let angle = Gordium.getAngleBetweenSegments(previousSegment, currentSegment, nextSegment);
                             if (Gordium.isAcuteAngle(angle)) {
-                                var coords = Gordium.calculateAbsoluteValueOfSegmentEnd(this.path, currentSegmentIndex);
+                                let coords = Gordium.calculateAbsoluteValueOfSegmentEnd(this.path, currentSegmentIndex);
                                 points.push(coords.x);
                                 points.push(coords.y);
                             }
@@ -82,8 +82,8 @@
             }
 
             pathIndex = 0;
-            var points = newPaths[pathIndex].points;
-            for (var i = toLength; i > fromLength; i -= this.sampleInterval) {
+            let points = newPaths[pathIndex].points;
+            for (let i = toLength; i > fromLength; i -= this.sampleInterval) {
                 points.unshift(this.path.getPointAtLength(i).y);
                 points.unshift(this.path.getPointAtLength(i).x);
 
@@ -98,22 +98,22 @@
          *
          */
         overUnderCurves() {
-            var self = this;
+            let self = this;
 
             function indexOfIntersectionOnOtherKnot(knot, x, y) {
-                for (var i = 0; i < knot.intersections.length; i++) {
-                    var intersection = knot.intersections[i];
+                for (let i = 0; i < knot.intersections.length; i++) {
+                    let intersection = knot.intersections[i];
                     if (intersection.x == x && intersection.y == y /*&& intersection.knot1 == self*/) {
                         return i;
                     }
                 }
             }
 
-            var intersectionIndex = -1,
+            let intersectionIndex = -1,
                     startIntersectionIndex,
                     over,
                     startOver;
-            for (var i = 0; i < this.intersections.length; i++) {
+            for (let i = 0; i < this.intersections.length; i++) {
                 if (this.intersections[i].over !== undefined) {
                     intersectionIndex = i;
                 }
@@ -126,10 +126,10 @@
             else {
                 startIntersectionIndex = intersectionIndex = 0;
                 startOver = over = true;
-                var intersection = this.intersections[0]
+                let intersection = this.intersections[0]
                 intersection.over = over;
                 if (intersection.knot1 !== intersection.knot2) {
-                    var idx = indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y);
+                    let idx = indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y);
                     if (intersection.knot2.intersections[idx].over === undefined) {
                         intersection.knot2.intersections[idx].over = -over;
                     }
@@ -138,14 +138,14 @@
 
             while (intersectionIndex > 0) {
                 over = !over;
-                var intersection = this.intersections[--intersectionIndex];
+                let intersection = this.intersections[--intersectionIndex];
                 if (intersection.over !== undefined) {
                     continue;
                 }
                 intersection.over = over;
 
                 if (intersection.knot1 !== intersection.knot2) {
-                    var idx = indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y);
+                    let idx = indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y);
                     if (intersection.knot2.intersections[idx].over === undefined) {
                         intersection.knot2.intersections[idx].over = !over;
                     }
@@ -156,14 +156,14 @@
 
             while (intersectionIndex < this.intersections.length - 1) {
                 over = !over;
-                var intersection = this.intersections[++intersectionIndex];
+                let intersection = this.intersections[++intersectionIndex];
                 if (intersection.over !== undefined) {
                     continue;
                 }
                 intersection.over = over;
 
                 if (intersection.knot1 !== intersection.knot2) {
-                    var idx = indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y);
+                    let idx = indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y);
                     if (intersection.knot2.intersections[idx].over === undefined) {
                         intersection.knot2.intersections[idx].over = !over;
                     }
@@ -178,7 +178,7 @@
             let overGroup = document.getElementById("over");
             let underGroup = document.getElementById("under");
             let color = Gordium.randomColor();
-            for (var x = 0; x < this.pathSegments.length; x++) {
+            for (let x = 0; x < this.pathSegments.length; x++) {
                 let polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
                 polyLine.setAttribute("id", "path-segment-" + x);
                 polyLine.setAttribute("points", this.pathSegments[x].points);
@@ -204,12 +204,12 @@
              path.setAttribute("stroke-dasharray", length+","+length);
 
              knot.intersections.sort(function(a,b){return a-b});
-             var dashArray = [];
+             let dashArray = [];
              if (i%2!=0) {
              dashArray.push(1);
              }
              dashArray.push(knot.intersections[0]/2);
-             for (var j=1; j<knot.intersections.length; j++) {
+             for (let j=1; j<knot.intersections.length; j++) {
              dashArray.push(knot.intersections[j]-knot.intersections[j-1]);
              }
              if (i%2==0) {
@@ -225,12 +225,12 @@
          * TODO debug only
          */
         drawDebugIntersections() {
-            for (var j = 0; j < this.intersections.length; j++) {
-                var intersection = this.intersections[j];
-                var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            for (let j = 0; j < this.intersections.length; j++) {
+                let intersection = this.intersections[j];
+                let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 circle.setAttribute("r", 5);
                 circle.setAttribute("fill", Gordium.randomColor());
-                var point = this.path.getPointAtLength(intersection.distance1);
+                let point = this.path.getPointAtLength(intersection.distance1);
                 circle.setAttribute("cx", point.x);
                 circle.setAttribute("cy", point.y);
 
@@ -244,8 +244,8 @@
          * TODO debug only
          */
         drawDebugCurveSegments() {
-            for (var x = 0; x < this.pathSegments.length; x++) {
-                var polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            for (let x = 0; x < this.pathSegments.length; x++) {
+                let polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
                 polyLine.setAttribute("points", this.pathSegments[x].points);
                 polyLine.setAttribute("fill", "none");
                 polyLine.setAttribute("stroke-width", "3");
