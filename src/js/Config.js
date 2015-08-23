@@ -1,17 +1,21 @@
-class Config {
+(function(Gordium) {
 
-    constructor(config = {}) {
-        this.sampleInterval = 10,
-        this.knots = []
+    class Config {
 
-        this.overrideProperties(config);
-    }
+        constructor(config = {}) {
+            this.sampleInterval = 10;
+            this.knots = [];
 
-    overrideProperties(config) {
-        for (let key in config) {
-            this[key] = config[key];
+            this.overrideProperties(config);
+        }
+
+        overrideProperties(config) {
+            for (let key in config) {
+                this[key] = config[key];
+            }
         }
     }
-}
 
-Gordium.Config = Config;
+    Gordium.Config = Config;
+
+})(Gordium);
