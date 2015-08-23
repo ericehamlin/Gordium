@@ -5,6 +5,7 @@ class Knot {
         this.sampleInterval = sampleInterval;
         this.path = path;
         this.pathSegments = [];
+        this.drawnSegments = [];
         this.points = [];
         this.intersections = [];
 
@@ -28,8 +29,6 @@ class Knot {
         var pathIndex = 0;
         var fromLength = 0;
         var toLength = this.intersections[0].distance1/2;
-
-        console.log(this.path.pathSegList);
 
         for (var j=0; j<this.intersections.length; j++) {
             if (newPaths[pathIndex] == undefined) {
@@ -94,6 +93,9 @@ class Knot {
         this.pathSegments = newPaths;
     }
 
+    /**
+     *
+     */
     overUnderCurves() {
         var self = this;
         function indexOfIntersectionOnOtherKnot(knot, x, y) {
@@ -165,12 +167,13 @@ class Knot {
                 if (intersection.knot2.intersections[idx].over === undefined) {
                     intersection.knot2.intersections[idx].over = !over;
                 }
-
             }
         }
     }
 
-
+    /**
+     *
+     */
     draw() {
         let overGroup = document.getElementById("over");
         let underGroup = document.getElementById("under");
@@ -192,6 +195,8 @@ class Knot {
                 console.debug("under");
                 underGroup.appendChild(polyLine);
             }
+
+            this.drawnSegments.push(polyLine);
         }
 
         /*
@@ -219,7 +224,7 @@ class Knot {
     /**
      * TODO debug only
      */
-    drawIntersections() {
+    drawDebugIntersections() {
         for (var j = 0; j < this.intersections.length; j++) {
             var intersection = this.intersections[j];
             var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -238,7 +243,7 @@ class Knot {
     /**
      * TODO debug only
      */
-    drawCurveSegments() {
+    drawDebugCurveSegments() {
         for(var x=0; x<this.pathSegments.length; x++) {
             var polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
             polyLine.setAttribute("points", this.pathSegments[x].points);

@@ -4,6 +4,8 @@ class Knotwork {
      *
      * @param filename
      * @param srcSvg
+     * @param sampleInterval
+     * @param config
      */
     constructor(filename=null, srcSvg=null, sampleInterval=10, config={}) {
         let self = this;
@@ -37,11 +39,14 @@ class Knotwork {
 
     }
 
+    /**
+     *
+     */
     processKnotwork() {
         this.getPathsFromSvg();
         Gordium.findIntersectionsForKnots(this.knots, this.sampleInterval);
 
-        this.drawIntersections(); // debug
+        this.drawDebugIntersections(); // debug
 
         this.segmentCurves();
 
@@ -51,9 +56,7 @@ class Knotwork {
 
         this.draw(); // animate each curve
 
-        //this.drawCurveSegments();
-
-
+        //this.drawDebugCurveSegments();
     }
 
     /**
@@ -75,24 +78,6 @@ class Knotwork {
         }
     }
 
-    /**
-     * TODO debug only
-     */
-    drawIntersections() {
-        for (var i = 0; i < this.knots.length; i++) {
-            this.knots[i].drawIntersections();
-        }
-    }
-
-    /**
-     * TODO debug only
-     */
-    drawCurveSegments() {
-        for (var i = 0; i < this.knots.length; i++) {
-            this.knots[i].drawCurveSegments();
-        }
-    }
-
     overUnderCurves() {
         for (var i=0; i<this.knots.length; i++) {
             this.knots[i].overUnderCurves();
@@ -110,6 +95,24 @@ class Knotwork {
 
         for (var i=0; i<this.knots.length; i++) {
             this.knots[i].draw();
+        }
+    }
+
+    /**
+     * TODO debug only
+     */
+    drawDebugIntersections() {
+        for (var i = 0; i < this.knots.length; i++) {
+            this.knots[i].drawDebugIntersections();
+        }
+    }
+
+    /**
+     * TODO debug only
+     */
+    drawDebugCurveSegments() {
+        for (var i = 0; i < this.knots.length; i++) {
+            this.knots[i].drawDebugCurveSegments();
         }
     }
 }

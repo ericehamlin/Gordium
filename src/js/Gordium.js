@@ -1,12 +1,11 @@
-class Gordium {
-
+let Gordium = {
 
     /**
      *
      * @param filename
      * @returns {Promise}
      */
-    static loadSvg(filename) {
+    loadSvg: function(filename) {
 
         var request = new XMLHttpRequest();
         var promise = new Promise(function (resolve, reject) {
@@ -27,14 +26,14 @@ class Gordium {
             }
         });
         return promise;
-    }
+    },
 
     /**
      *
      * @param segment
      * @returns {boolean}
      */
-    static pathSegmentIsAbsolute(segment) {
+    pathSegmentIsAbsolute: function(segment) {
         var type = segment.pathSegType;
         return     type === SegmentTypes.PATHSEG_MOVETO_ABS
                 || type === SegmentTypes.PATHSEG_LINETO_ABS
@@ -45,9 +44,15 @@ class Gordium {
                 || type === SegmentTypes.PATHSEG_LINETO_VERTICAL_ABS
                 || type === SegmentTypes.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS
                 || type === SegmentTypes.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS;
-    }
+    },
 
-    static calculateAbsoluteValueOfSegmentEnd(path, segmentIndex) {
+    /**
+     *
+     * @param path
+     * @param segmentIndex
+     * @returns {{x: number, y: number}}
+     */
+    calculateAbsoluteValueOfSegmentEnd: function(path, segmentIndex) {
         let coords = {x:0, y:0},
                 segments = path.pathSegList;
 
@@ -63,7 +68,7 @@ class Gordium {
         }
 
         return coords
-    }
+    },
 
     /**
      * TODO don't use full segment length -- get angle close to point
@@ -72,7 +77,7 @@ class Gordium {
      * @param segment3
      * @returns {number}
      */
-    static getAngleBetweenSegments(segment1, segment2, segment3){
+    getAngleBetweenSegments: function(segment1, segment2, segment3){
         let x1 = segment2.x - segment1.x,
             x2 = segment3.x - segment2.x,
             y1 = segment2.y - segment1.y,
@@ -85,27 +90,27 @@ class Gordium {
         );
 
         return angle;
-    }
+    },
 
     /**
      *
      * @param {number} angle (in radians)
      * @returns {boolean}
      */
-    static isAcuteAngle(angle) {
+    isAcuteAngle: function(angle) {
         let maxAngle = Math.PI / 2;
         return Math.abs(angle) < maxAngle;
-    }
+    },
 
     /**
      *
      * @param svg
      * @returns {NodeList}
      */
-    static getPathsFromSvg(svg) {
+    getPathsFromSvg: function(svg) {
         let paths = svg.getElementsByTagName("path");
         return paths;
-    }
+    },
 
     /**
      * Approximate curves with Polylines
@@ -116,7 +121,7 @@ class Gordium {
      * @param sampleInterval
      * @returns {Array}
      */
-    static getPointsFromPath(path, fromLength, toLength, sampleInterval) {
+    getPointsFromPath: function(path, fromLength, toLength, sampleInterval) {
         let points = [];
         for (var i=fromLength ; i<toLength ; i+=sampleInterval) {
             let point = path.getPointAtLength(i);
@@ -133,7 +138,7 @@ class Gordium {
             pathLength: toLength
         });
         return points;
-    }
+    },
 
     /**
      * Find all intersections and associate them with points on curve
@@ -146,7 +151,7 @@ class Gordium {
      * point-slope form
      * y = m(x-Px)+Py  (Px and Py are x and y of a point on line)
      */
-    static findIntersectionsForKnots(knots, sampleInterval=10) {
+    findIntersectionsForKnots: function(knots, sampleInterval=10) {
         for (var i = 0; i < knots.length; i++) {
             let knot = knots[i],
                 points = knot.points;
@@ -196,16 +201,22 @@ class Gordium {
                     return a.distance1 > b.distance1 ? 1 : -1;
                 });
         }
-    }
+    },
 
-    static defineSegment(point1, point2) {
+    /**
+     *
+     * @param point1
+     * @param point2
+     * @returns {{x1: *, y1: *, x2: *, y2: *}}
+     */
+    defineSegment: function(point1, point2) {
         return {
             x1: point1.x,
             y1: point1.y,
             x2: point2.x,
             y2: point2.y
         };
-    }
+    },
 
     /**
      *
@@ -213,7 +224,7 @@ class Gordium {
      * @param segment2
      * @returns {*}
      */
-    static linesIntersect(segment1, segment2) {
+    linesIntersect: function(segment1, segment2) {
 
         let m1 = Gordium.getSlope(segment1);
         let m2 = Gordium.getSlope(segment2);
@@ -238,33 +249,33 @@ class Gordium {
             segment1Percent:(Math.abs(x-segment1.x1)*100)/Math.abs(segment1.x1-segment1.x2),
             segment2Percent:(Math.abs(x-segment2.x1)*100)/Math.abs(segment2.x1-segment2.x2)
         };
-    }
+    },
 
     /**
      *
      * @param segment
      * @returns {number}
      */
-    static getSlope(segment) {
+    getSlope: function(segment) {
         var slope = (segment.y2 - segment.y1) / (segment.x2 - segment.x1);
         return slope;
-    }
+    },
 
 
-    static randomInteger(max) {
+    randomInteger: function(max) {
         return Math.round(Math.random() * max);
-    }
+    },
 
-    static randomColor() {
+    randomColor: function() {
         return "rgb(" + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + ")";
-    }
+    },
 
     /**
      * TODO debugOnly
      * @param point1
      * @param point2
      */
-    static drawDebugSegment(point1, point2) {
+    drawDebugSegment: function(point1, point2) {
         var currentColor = Gordium.randomColor();
         var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
         line.setAttribute("x1", point1.x);
