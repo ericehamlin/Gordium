@@ -18,3 +18,5 @@ class Intersection {
 
     }
 }
+
+Gordium.Intersection = Intersection;

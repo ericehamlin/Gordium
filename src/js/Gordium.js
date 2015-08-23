@@ -35,15 +35,15 @@ let Gordium = {
      */
     pathSegmentIsAbsolute: function(segment) {
         var type = segment.pathSegType;
-        return     type === SegmentTypes.PATHSEG_MOVETO_ABS
-                || type === SegmentTypes.PATHSEG_LINETO_ABS
-                || type === SegmentTypes.PATHSEG_CURVETO_CUBIC_ABS
-                || type === SegmentTypes.PATHSEG_CURVETO_QUADRATIC_ABS
-                || type === SegmentTypes.PATHSEG_ARC_ABS
-                || type === SegmentTypes.PATHSEG_LINETO_HORIZONTAL_ABS
-                || type === SegmentTypes.PATHSEG_LINETO_VERTICAL_ABS
-                || type === SegmentTypes.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS
-                || type === SegmentTypes.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS;
+        return     type === Gordium.SegmentTypes.PATHSEG_MOVETO_ABS
+                || type === Gordium.SegmentTypes.PATHSEG_LINETO_ABS
+                || type === Gordium.SegmentTypes.PATHSEG_CURVETO_CUBIC_ABS
+                || type === Gordium.SegmentTypes.PATHSEG_CURVETO_QUADRATIC_ABS
+                || type === Gordium.SegmentTypes.PATHSEG_ARC_ABS
+                || type === Gordium.SegmentTypes.PATHSEG_LINETO_HORIZONTAL_ABS
+                || type === Gordium.SegmentTypes.PATHSEG_LINETO_VERTICAL_ABS
+                || type === Gordium.SegmentTypes.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS
+                || type === Gordium.SegmentTypes.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS;
     },
 
     /**
@@ -169,8 +169,8 @@ let Gordium = {
                         var distance1 = (j * sampleInterval)  + (intersection.segment1Percent * sampleInterval / 100);
                         var distance2 = (k * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
 
-                        let newIntersection = new Intersection(knot, distance1, knot, distance2, intersection.x, intersection.y);
-                        let newIntersection2 = new Intersection(knot, distance2, knot, distance1,  intersection.x, intersection.y);
+                        let newIntersection = new Gordium.Intersection(knot, distance1, knot, distance2, intersection.x, intersection.y);
+                        let newIntersection2 = new Gordium.Intersection(knot, distance2, knot, distance1,  intersection.x, intersection.y);
 
                         knot.intersections.push(newIntersection);
                         knot.intersections.push(newIntersection2);
@@ -188,8 +188,8 @@ let Gordium = {
                         if (intersection) {
                             var distance1 = (j * sampleInterval)  + (intersection.segment1Percent * sampleInterval / 100);
                             var distance2 = (y * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
-                            let newIntersection = new Intersection(knot, distance1, knot2, distance2, intersection.x, intersection.y);
-                            let newIntersection2 = new Intersection(knot2, distance2, knot, distance1, intersection.x, intersection.y);
+                            let newIntersection = new Gordium.Intersection(knot, distance1, knot2, distance2, intersection.x, intersection.y);
+                            let newIntersection2 = new Gordium.Intersection(knot2, distance2, knot, distance1, intersection.x, intersection.y);
                             knot.intersections.push(newIntersection);
                             knot2.intersections.push(newIntersection2)
                         }

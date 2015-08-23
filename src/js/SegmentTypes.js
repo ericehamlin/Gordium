@@ -20,3 +20,5 @@ const SegmentTypes = {
     PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS: 18,
     PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL: 19
 };
+
+Gordium.SegmentTypes = SegmentTypes;
