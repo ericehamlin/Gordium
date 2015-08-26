@@ -57,6 +57,8 @@
 
             this.overUnderCurves(); // find Over/Under for path segments
 
+            this.convertStrokesToShapes();
+
             this.draw(); // animate each curve
 
             //this.drawDebugCurveSegments();
@@ -84,6 +86,12 @@
         overUnderCurves() {
             for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].overUnderCurves();
+            }
+        }
+
+        convertStrokesToShapes() {
+            for (let i = 0; i < this.knots.length; i++) {
+                this.knots[i].convertStrokesToShapes();
             }
         }
 

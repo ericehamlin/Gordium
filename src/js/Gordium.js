@@ -7,6 +7,8 @@
  * default config for individual knots
  * match config to knots
  *
+ * unit tests for some things
+ *
  * strategy for how to animate
  */
 
@@ -95,6 +97,18 @@ let Gordium = {
             y1 = segment2.y - segment1.y,
             y2 = segment3.y - segment2.y;
 
+        return this.getAngleBetweenVectors(x1,y1, x2,y2)
+    },
+
+    /**
+     *
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @returns {number}
+     */
+    getAngleBetweenVectors: function(x1, y1, x2, y2) {
         let angle = Math.acos(
                 ((x1 * x2) + (y1 * y2))
                 /
@@ -298,4 +312,4 @@ let Gordium = {
         document.getElementsByTagName("svg")[1].appendChild(line);
 
     }
-}
+};

@@ -94,6 +94,68 @@
             this.pathSegments = newPaths;
         }
 
+        convertStrokesToShapes() {
+
+//            function getPerpendicular(point1, point2, point3) {
+//                let x1 = points[j] - points[j-2],
+//                    x2 = points[j+2] - points[j],
+//                    y1 = points[j+1] - points[j-1],
+//                    y2 = points[j+3] - points[j+1];
+//                var x3 = points[j+2]- points[j-2], y3=points[j+3]- points[j-1];
+//                var perpendicular = Math.atan(y3/x3) + (Math.PI/2);
+//            }
+
+            for (let i = 0; i < this.pathSegments.length; i++) {
+                let points = this.pathSegments[i].points;
+                let polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+                let insidePoints = [],
+                    outsidePoints = [];
+
+
+
+                for(let j=0; j < points.length-2; j+=2) {
+                    if (j>2) {
+                        let x1 = points[j] - points[j-2],
+                            x2 = points[j+2] - points[j],
+                            y1 = points[j+1] - points[j-1],
+                            y2 = points[j+3] - points[j+1];
+                        var x3 = points[j+2]- points[j-2], y3=points[j+3]- points[j-1];
+                        var perpendicular = Math.atan(y3/x3) + (Math.PI/2);
+//                        let angleBetween = Gordium.getAngleBetweenVectors(x1,y1, x3,y3);
+//                        if (angleBetween < (0)) {
+//
+//                        }
+                        var width = 20;
+                        var xDiffOut = width * Math.cos(perpendicular);
+                        var yDiffOut = width * Math.sin(perpendicular);
+                        var xDiffIn = -width * Math.cos(perpendicular);
+                        var yDiffIn = -width * Math.sin(perpendicular);
+                        if (!isNaN(xDiffOut) && !isNaN(x1)) {
+
+//                            polyLine.setAttribute("fill", "none");
+//                            polyLine.setAttribute("stroke-width", "2");
+//                            polyLine.setAttribute("stroke", Gordium.randomColor());
+//                            polyLine.setAttribute("x1", points[j]);
+//                            polyLine.setAttribute("y1", points[j+1]);
+//                            polyLine.setAttribute("x2", xDiffOut + points[j]);
+//                            polyLine.setAttribute("y2", yDiffOut + points[j+1]);
+                            outsidePoints.push(xDiffOut + points[j]);
+                            outsidePoints.push(yDiffOut + points[j+1]);
+                            insidePoints.unshift(yDiffIn + points[j+1]);
+                            insidePoints.unshift(xDiffIn + points[j]);
+
+                        }
+                    }
+                }
+                var polyPoints = outsidePoints.concat(insidePoints);
+                polyLine.setAttribute("points", polyPoints);
+                polyLine.setAttribute("fill", Gordium.randomColor());
+                polyLine.setAttribute("stroke-width", "1");
+                polyLine.setAttribute("stroke", Gordium.randomColor());
+                this.destSvg.appendChild(polyLine);
+            }
+        }
+
         /**
          *
          */
