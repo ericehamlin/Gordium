@@ -109,12 +109,13 @@ let Gordium = {
      * @returns {number}
      */
     getAngleBetweenVectors: function(x1, y1, x2, y2) {
-        let angle = Math.acos(
-                ((x1 * x2) + (y1 * y2))
-                /
-                (Math.sqrt((x1 * x1) + (y1 * y1)) * Math.sqrt((x2 * x2) + (y2 * y2)))
-        );
-
+        let cosine = ((x1 * x2) + (y1 * y2))
+            /
+            (Math.sqrt((x1 * x1) + (y1 * y1)) * Math.sqrt((x2 * x2) + (y2 * y2)));
+        let angle = Math.acos(cosine);
+        if (cosine < 0) {
+            angle += Math.PI;
+        }
         return angle;
     },
 
