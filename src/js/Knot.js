@@ -256,11 +256,13 @@
             let overGroup = document.getElementById("over");
             let underGroup = document.getElementById("under");
 
-            let defs = document.createElementNS(Gordium.svgNS, "defs");
+            let defs = document.createElementNS(Gordium.svgNS, "g");
             this.destSvg.appendChild(defs);
 
             for (let i = 0; i < this.pathSegments.length; i++) {
-                let clipPath = document.createElementNS(Gordium.svgNS, "clipPath");
+                let points = this.pathSegments[i].points;
+
+                let clipPath = document.createElementNS(Gordium.svgNS, "g");
                 clipPath.setAttribute("id", this.id + "-path-segment-" + i + "-clip-path");
                 for(let j=0; j< this.pathSegments[i].points.length/2; j++) {
                     let rect = Gordium.createSvgElement("rect", {
@@ -274,7 +276,7 @@
 
                 let polyLine = Gordium.createSvgElement("polyline", {
                     "id": this.id + "-path-segment-" + i,
-                    "points": this.pathSegments[i].points,
+                    "points": points,
                     "fill": "none",
                     "stroke-width": this.config['stroke-width'],
                     "stroke-linejoin": "round",
@@ -293,6 +295,40 @@
 
                 this.drawnSegments.push(polyLine);
             }
+        }
+
+        beginAnimate() {
+            for (let i = 0; i < this.pathSegments.length; i++) {
+                for(let j=0; j<this.pathSegments[i].points.length; j++) {
+                    this.placeClipPathRectAtBeginningOfSegment(document.getElementById(this.id + "-path-segment-" + i + "-clip-path-rect-" + j), this.pathSegments[i]);
+                }
+            }
+            animate(0, 0);
+        }
+
+        placeClipPathRectAtBeginningOfSegment(rect, segment) {
+            // get angle of first sub-segment
+            // rotate clipping rects one-by-one
+            // subtract width from initial placement
+        }
+
+        animate(segmentIndex, subSegmentIndex){
+            // move clipping rect n units along sub-segment
+            // allow for units > sampleInterval
+            // so that we can animate through several sub-segments at one time
+            // if will pass beyond end of sub-segment
+                // move to end of segment
+                // if there are more sub-segments in this segment
+                    // position next clipping rect on top of previous
+                    // move next clipping rect remainder of units
+                    // increase current sub-segment-index
+                // else
+                    // if there are more segments
+                        // increase segment index
+                        // set sub-segment index to 0
+                        // move next clipping rect remainder of units
+                    // else end animate loop
+            // call animate again after time interval
         }
 
         /**

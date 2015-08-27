@@ -61,6 +61,7 @@
 
             this.draw(); // animate each curve
 
+            this.animate();
             //this.drawDebugCurveSegments();
         }
 
@@ -106,6 +107,12 @@
 
             for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].draw();
+            }
+        }
+
+        animate() {
+            for (let i = 0; i < this.knots.length; i++) {
+                this.knots[i].beginAnimate();
             }
         }
 
