@@ -11,6 +11,8 @@
             this.points = [];
             this.intersections = [];
 
+            this.id = "knot-" + Gordium.randomInteger(1000);
+
             /** default config -- can't use Object.assign for some reason */
             this.config = {
                 'color': config.color ? config.color : Gordium.randomColor(),
@@ -95,6 +97,7 @@
         }
 
         convertStrokesToShapes() {
+            return;
             var width = 20;
             function oneForNaN(val) {
                 return isNaN(val) ? 0 : val;
@@ -252,17 +255,34 @@
         draw() {
             let overGroup = document.getElementById("over");
             let underGroup = document.getElementById("under");
-            let color = Gordium.randomColor();
-            for (let x = 0; x < this.pathSegments.length; x++) {
-                let polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-                polyLine.setAttribute("id", "path-segment-" + x);
-                polyLine.setAttribute("points", this.pathSegments[x].points);
-                polyLine.setAttribute("fill", "none");
-                polyLine.setAttribute("stroke-width", this.config['stroke-width']);
-                polyLine.setAttribute("stroke-linejoin", "round");
 
-                polyLine.setAttribute("stroke", this.config.color);
-                if (this.pathSegments[x].intersection.over) {
+            let defs = document.createElementNS(Gordium.svgNS, "defs");
+            this.destSvg.appendChild(defs);
+
+            for (let i = 0; i < this.pathSegments.length; i++) {
+                let clipPath = document.createElementNS(Gordium.svgNS, "clipPath");
+                clipPath.setAttribute("id", this.id + "-path-segment-" + i + "-clip-path");
+                for(let j=0; j< this.pathSegments[i].points.length/2; j++) {
+                    let rect = Gordium.createSvgElement("rect", {
+                        "id"     : this.id + "-path-segment-" + i + "-clip-path-rect-" + j,
+                        "width"  : this.sampleInterval,
+                        "height" : this.config["stroke-width"] + 10
+                    });
+                    clipPath.appendChild(rect);
+                }
+                defs.appendChild(clipPath);
+
+                let polyLine = Gordium.createSvgElement("polyline", {
+                    "id": this.id + "-path-segment-" + i,
+                    "points": this.pathSegments[i].points,
+                    "fill": "none",
+                    "stroke-width": this.config['stroke-width'],
+                    "stroke-linejoin": "round",
+                    "stroke": this.config.color,
+//                    "clip-path": "url(#" + this.id + "-path-segment-" + i + "-clip-path)"
+                });
+
+                if (this.pathSegments[i].intersection.over) {
                     console.debug("over");
                     overGroup.appendChild(polyLine);
                 }
@@ -273,27 +293,6 @@
 
                 this.drawnSegments.push(polyLine);
             }
-
-            /*
-             paths[paths.length] = newPath;
-             path.setAttribute("stroke-dasharray", length+","+length);
-
-             knot.intersections.sort(function(a,b){return a-b});
-             let dashArray = [];
-             if (i%2!=0) {
-             dashArray.push(1);
-             }
-             dashArray.push(knot.intersections[0]/2);
-             for (let j=1; j<knot.intersections.length; j++) {
-             dashArray.push(knot.intersections[j]-knot.intersections[j-1]);
-             }
-             if (i%2==0) {
-             dashArray.push(1);
-             }
-             dashArray.push(length);
-             newPath.setAttribute("stroke-dasharray", dashArray.join(","));
-             newPath.setAttribute("stroke-dashoffset", 0);
-             */
         }
 
         /**

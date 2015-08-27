@@ -1,6 +1,6 @@
 /**
  * TODO:
- * save existing curved segments instead of breaking them into polylines
+ * save existing curved segments instead of breaking them into polylines ? probably not
  * change linear paths to shapes
  * increase length of paths just slightly so that they overlap
  * get corners at beginning and end of paths
@@ -13,6 +13,8 @@
  */
 
 let Gordium = {
+
+    svgNS: "http://www.w3.org/2000/svg",
 
     /**
      *
@@ -40,6 +42,14 @@ let Gordium = {
             }
         });
         return promise;
+    },
+
+    createSvgElement(tag, attributes) {
+        let element = document.createElementNS(Gordium.svgNS, tag);
+        for (let key in attributes) {
+            element.setAttribute(key, attributes[key]);
+        }
+        return element;
     },
 
     /**
