@@ -299,17 +299,35 @@
 
         beginAnimate() {
             for (let i = 0; i < this.pathSegments.length; i++) {
+                let points = this.pathSegments[i].points;
+
+                // get angle of first sub-segment
+                let angle = Math.atan(Gordium.getSlope({
+                        x1: points[0],
+                        y1: points[1],
+                        x2: points[2],
+                        y2: points[3]
+                    }));
+
                 for(let j=0; j<this.pathSegments[i].points.length; j++) {
-                    this.placeClipPathRectAtBeginningOfSegment(document.getElementById(this.id + "-path-segment-" + i + "-clip-path-rect-" + j), this.pathSegments[i]);
+                    let rect = document.getElementById(this.id + "-path-segment-" + i + "-clip-path-rect-" + j);
+
+                    if (!rect) {
+                        continue;
+                    }
+                    this.placeClipPathRectAtBeginningOfSegment(rect, angle, points[0], points[1]);
                 }
             }
-            animate(0, 0);
+            this.animate(0, 0);
         }
 
-        placeClipPathRectAtBeginningOfSegment(rect, segment) {
-            // get angle of first sub-segment
-            // rotate clipping rects one-by-one
+        placeClipPathRectAtBeginningOfSegment(rect, angle, x, y) {
+            // rotate clipping rect
+            rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + x + "," + y + ") translate(-"+ (this.sampleInterval/2)+",-"+((this.config["stroke-width"] + 10)/2)+")");
+
             // subtract width from initial placement
+            rect.setAttribute("x", x /*- (this.sampleInterval * Math.cos(angle + (Math.PI/2)))*/);
+            rect.setAttribute("y", y /*- (this.sampleInterval * Math.sin(angle + (Math.PI/2)))*/);
         }
 
         animate(segmentIndex, subSegmentIndex){

@@ -95,6 +95,7 @@ let Gordium = {
     },
 
     /**
+     * these are svg segments, not gordium segments TODO: distinction
      * TODO don't use full segment length -- get angle close to point
      * @param segment1
      * @param segment2
@@ -298,6 +299,14 @@ let Gordium = {
         return slope;
     },
 
+    /**
+     *
+     * @param {number} rad
+     * @returns {number}
+     */
+    radToDeg: function(rad) {
+        return rad * 180 / Math.PI;
+    },
 
     randomInteger: function(max) {
         return Math.round(Math.random() * max);
