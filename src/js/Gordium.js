@@ -1,8 +1,13 @@
 /**
- * TODO:
- * save existing curved segments instead of breaking them into polylines ? probably not
- * change linear paths to shapes
+ * TODO-XXX
+ * get rid of extra intersections (are they at vertical lines? -- I don't think so
+ * angle too large is often an indication, but not necessarily. Neither is it necessarily the case that a stray intersection
+ * has too large of an angle)
  * increase length of paths just slightly so that they overlap
+ *
+ *
+ * TODO:
+ * change linear paths to shapes
  * get corners at beginning and end of paths
  * default config for individual knots
  * match config to knots
@@ -269,7 +274,6 @@ let Gordium = {
 
         if (m1==m2) return null; // lines are parallel
 
-
         let x = (segment2.y1 - segment1.y1 + (m1 * segment1.x1) - (m2 * segment2.x1)) / (m1-m2);
         let y = (m1*(x-segment1.x1))+segment1.y1;
 
@@ -280,6 +284,18 @@ let Gordium = {
             minX2 = Math.min(segment2.x1, segment2.x2);
 
         if (x >= maxX1 || x >= maxX2 || x <= minX1 || x <= minX2) return null;
+
+        if (Math.abs(m1) >= Math.PI*2 || Math.abs(m2) >= Math.PI * 2) {
+            console.log("INtersections", m1, m2);
+            let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("r", 10);
+            circle.setAttribute("fill", "#ff0000");
+            circle.setAttribute("cx", x);
+            circle.setAttribute("cy", y);
+
+            // TODO global debug svg
+            document.getElementsByTagName("svg")[1].appendChild(circle);
+        }
 
         return {
             x:x,
