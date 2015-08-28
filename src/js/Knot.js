@@ -256,13 +256,13 @@
             let overGroup = document.getElementById("over");
             let underGroup = document.getElementById("under");
 
-            let defs = document.createElementNS(Gordium.svgNS, "g");
+            let defs = document.createElementNS(Gordium.svgNS, "defs");
             this.destSvg.appendChild(defs);
 
             for (let i = 0; i < this.pathSegments.length; i++) {
                 let points = this.pathSegments[i].points;
 
-                let clipPath = document.createElementNS(Gordium.svgNS, "g");
+                let clipPath = document.createElementNS(Gordium.svgNS, "clipPath");
                 clipPath.setAttribute("id", this.id + "-path-segment-" + i + "-clip-path");
                 for(let j=0; j< this.pathSegments[i].points.length/2; j++) {
                     let rect = Gordium.createSvgElement("rect", {
@@ -281,7 +281,7 @@
                     "stroke-width": this.config['stroke-width'],
                     "stroke-linejoin": "round",
                     "stroke": this.config.color,
-//                    "clip-path": "url(#" + this.id + "-path-segment-" + i + "-clip-path)"
+                    "clip-path": "url(#" + this.id + "-path-segment-" + i + "-clip-path)"
                 });
 
                 if (this.pathSegments[i].intersection.over) {
@@ -298,8 +298,8 @@
         }
 
         beginAnimate() {
-            for (let i = 0; i < this.pathSegments.length; i++) {
-                let points = this.pathSegments[i].points;
+//            for (let i = 0; i < this.pathSegments.length; i++) {
+                let points = this.pathSegments[0].points;
 
                 // get angle of first sub-segment
                 let angle = Math.atan(Gordium.getSlope({
@@ -309,31 +309,81 @@
                         y2: points[3]
                     }));
 
-                for(let j=0; j<this.pathSegments[i].points.length; j++) {
-                    let rect = document.getElementById(this.id + "-path-segment-" + i + "-clip-path-rect-" + j);
+//                for(let j=0; j<this.pathSegments[i].points.length; j++) {
+                    let rect = document.getElementById(this.id + "-path-segment-" + 0 + "-clip-path-rect-" + 0);
 
-                    if (!rect) {
-                        continue;
-                    }
-                    this.placeClipPathRectAtBeginningOfSegment(rect, angle, points[0], points[1]);
-                }
-            }
+//                    if (!rect) {
+//                        continue;
+//                    }
+                    this.placeClipPathRectBehindPoint(rect, angle, points[0], points[1]);
+//                }
+//            }
             this.animate(0, 0);
         }
 
-        placeClipPathRectAtBeginningOfSegment(rect, angle, x, y) {
-            let transX = x - (this.sampleInterval * Math.cos(angle));
-            let transY = y - (this.sampleInterval * Math.sin(angle));
-
+        placeClipPathRect(rect, angle, x, y) {
+            console.log(angle);
             // rotate clipping rect
-            rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + transX + "," + transY + ") translate(0, -"+((this.config["stroke-width"] + 10)/2)+")");
+            rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + x + "," + y + ") translate(0, -"+((this.config["stroke-width"] + 10)/2)+")");
 
+            rect.setAttribute("x", x);
+            rect.setAttribute("y", y);
+        }
+
+        placeClipPathRectBehindPoint(rect, angle, x, y) {
             // subtract width from initial placement
-            rect.setAttribute("x", transX);
-            rect.setAttribute("y", transY);
+            let cosine = isNaN(angle) ? 0 : Math.cos(angle);
+            let sine = isNaN(angle) ? 1 : Math.sin(angle);
+            let transX = x - (this.sampleInterval * cosine);
+            let transY = y - (this.sampleInterval * sine);
+
+            this.placeClipPathRect(rect, angle, transX, transY);
         }
 
         animate(segmentIndex, subSegmentIndex){
+            let self = this;
+            let rect = document.getElementById(this.id + "-path-segment-" + segmentIndex + "-clip-path-rect-" + subSegmentIndex);
+            let points = this.pathSegments[segmentIndex].points;
+            let m = Gordium.getSlope({
+                x1: points[subSegmentIndex*2],
+                y1: points[(subSegmentIndex*2) + 1],
+                x2: points[(subSegmentIndex*2) + 2],
+                y2: points[(subSegmentIndex*2) + 3]
+            });
+
+            let angle = Math.atan(isNaN(m) ? 0 : m);
+
+            this.placeClipPathRectBehindPoint(rect, angle, points[(subSegmentIndex*2)], points[(subSegmentIndex*2) + 1]);
+            if ((subSegmentIndex*2) < points.length - 4) {
+                setTimeout(function() {self.animate(segmentIndex, subSegmentIndex+1);}, 60);
+            }
+            else if (segmentIndex < this.pathSegments.length-1) {
+                let id = this.id + "-path-segment-" + segmentIndex + "-clip-path-rect-" + (subSegmentIndex+1);
+                rect = document.getElementById(id);
+                m = Gordium.getSlope({
+                    x1: points[(subSegmentIndex*2) + 2],
+                    y1: points[(subSegmentIndex*2) + 3],
+                    x2: this.pathSegments[segmentIndex+1].points[0],
+                    y2: this.pathSegments[segmentIndex+1].points[1]
+                });
+                angle = Math.atan(isNaN(m) ? 0 : m);
+                this.placeClipPathRectBehindPoint(rect, angle, points[(subSegmentIndex*2) + 2], points[(subSegmentIndex*2) + 3]);
+
+                setTimeout(function() { self.animate(segmentIndex+1, 0); }, 60);
+            }
+            else {
+                let id = this.id + "-path-segment-" + segmentIndex + "-clip-path-rect-" + (subSegmentIndex+1);
+                rect = document.getElementById(id);
+                m = Gordium.getSlope({
+                    x1: points[(subSegmentIndex*2) + 2],
+                    y1: points[(subSegmentIndex*2) + 3],
+                    x2: this.pathSegments[0].points[0],
+                    y2: this.pathSegments[0].points[1]
+                });
+                angle = Math.atan(isNaN(m) ? 0 : m);
+                this.placeClipPathRectBehindPoint(rect, angle, points[(subSegmentIndex*2) + 2], points[(subSegmentIndex*2) + 3]);
+            }
+
             // move clipping rect n units along sub-segment
             // allow for units > sampleInterval
             // so that we can animate through several sub-segments at one time
