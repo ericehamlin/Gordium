@@ -16,7 +16,8 @@
             /** default config -- can't use Object.assign for some reason */
             this.config = {
                 'color': config.color ? config.color : Gordium.randomColor(),
-                'stroke-width': config['stroke-width'] ? config['stroke-width'] : 10
+                'stroke-width': config['stroke-width'] ? config['stroke-width'] : 10,
+                'animateTimeout' : config.animateTimeout ? config.animateTimeout : 20
             };
 
             this.destSvg = document.getElementById("dest-svg");
@@ -267,7 +268,7 @@
                 for(let j=0; j< this.pathSegments[i].points.length/2; j++) {
                     let rect = Gordium.createSvgElement("rect", {
                         "id"     : this.id + "-path-segment-" + i + "-clip-path-rect-" + j,
-                        "width"  : this.sampleInterval,
+                        "width"  : this.sampleInterval * 3,
                         "height" : this.config["stroke-width"] + 10
                     });
                     clipPath.appendChild(rect);
@@ -355,7 +356,7 @@
 
             this.placeClipPathRectBehindPoint(rect, angle, points[(subSegmentIndex*2)], points[(subSegmentIndex*2) + 1]);
             if ((subSegmentIndex*2) < points.length - 4) {
-                setTimeout(function() {self.animate(segmentIndex, subSegmentIndex+1);}, 60);
+                setTimeout(function() {self.animate(segmentIndex, subSegmentIndex+1);}, this.config.animateTimeout);
             }
             else if (segmentIndex < this.pathSegments.length-1) {
                 let id = this.id + "-path-segment-" + segmentIndex + "-clip-path-rect-" + (subSegmentIndex+1);
@@ -369,7 +370,7 @@
                 angle = Math.atan(isNaN(m) ? 0 : m);
                 this.placeClipPathRectBehindPoint(rect, angle, points[(subSegmentIndex*2) + 2], points[(subSegmentIndex*2) + 3]);
 
-                setTimeout(function() { self.animate(segmentIndex+1, 0); }, 60);
+                setTimeout(function() { self.animate(segmentIndex+1, 0); }, this.config.animateTimeout);
             }
             else {
                 let id = this.id + "-path-segment-" + segmentIndex + "-clip-path-rect-" + (subSegmentIndex+1);
