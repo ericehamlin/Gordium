@@ -322,12 +322,15 @@
         }
 
         placeClipPathRectAtBeginningOfSegment(rect, angle, x, y) {
+            let transX = x - (this.sampleInterval * Math.cos(angle));
+            let transY = y - (this.sampleInterval * Math.sin(angle));
+
             // rotate clipping rect
-            rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + x + "," + y + ") translate(-"+ (this.sampleInterval/2)+",-"+((this.config["stroke-width"] + 10)/2)+")");
+            rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + transX + "," + transY + ") translate(0, -"+((this.config["stroke-width"] + 10)/2)+")");
 
             // subtract width from initial placement
-            rect.setAttribute("x", x /*- (this.sampleInterval * Math.cos(angle + (Math.PI/2)))*/);
-            rect.setAttribute("y", y /*- (this.sampleInterval * Math.sin(angle + (Math.PI/2)))*/);
+            rect.setAttribute("x", transX);
+            rect.setAttribute("y", transY);
         }
 
         animate(segmentIndex, subSegmentIndex){
