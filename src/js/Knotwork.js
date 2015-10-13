@@ -120,6 +120,7 @@
          * TODO debug only
          */
         drawDebugIntersections() {
+            //return;
             for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].drawDebugIntersections();
             }

@@ -3,6 +3,15 @@
  * get rid of extra intersections (are they at vertical lines? -- I don't think so
  * angle too large is often an indication, but not necessarily. Neither is it necessarily the case that a stray intersection
  * has too large of an angle)
+ * And why is that, bozo? I thought you had narrowed down a solution.
+ * What do we know?
+ *
+ * fixed part 1: lines intersecting with next segment
+ * but some legit intersections between 2 lines are doubling
+ * - some areas between two segments have multiple unnecessary intersections
+ * - do some legitimate (necessary) intersections have multiple intersections? YES
+ * - do ONLY legitimate intersections have multiple intersections? NO
+ *
  * increase length of paths just slightly so that they overlap
  *
  *
@@ -205,7 +214,9 @@ let Gordium = {
                 Gordium.drawDebugSegment(points[j], points[j+1]);
 
                 // see if path intersects itself
-                for (let k = j + 1; k < points.length - 1; k++) {
+                for (let k = j + 2; k < points.length - 1; k++) {
+//                for (let k = j + 1; k < points.length - 1; k++) {
+                    if (j===0 && k === points.length - 2) { continue; }
                     let segment2 = Gordium.defineSegment(points[k], points[k+1]);
                     let intersection = Gordium.linesIntersect(segment1, segment2);
                     if (intersection) {
@@ -285,17 +296,6 @@ let Gordium = {
 
         if (x >= maxX1 || x >= maxX2 || x <= minX1 || x <= minX2) return null;
 
-        if (Math.abs(m1) >= Math.PI*2 || Math.abs(m2) >= Math.PI * 2) {
-            console.log("INtersections", m1, m2);
-            let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("r", 10);
-            circle.setAttribute("fill", "#ff0000");
-            circle.setAttribute("cx", x);
-            circle.setAttribute("cy", y);
-
-            // TODO global debug svg
-            document.getElementsByTagName("svg")[1].appendChild(circle);
-        }
 
         return {
             x:x,
