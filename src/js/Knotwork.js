@@ -51,7 +51,7 @@
 
             this.drawDebugIntersections(); // debug
 
-            this.segmentCurves();
+            this.divideCurves();
 
             // find curves from path segments
 
@@ -74,11 +74,11 @@
         }
 
         /**
-         * Break curves into curve segments on either side of intersections
+         * Break curves into polylines on either side of intersections
          */
-        segmentCurves() {
+        divideCurves() {
             for (let i = 0; i < this.knots.length; i++) {
-                this.knots[i].segmentCurves();
+                this.knots[i].divideCurves();
             }
         }
 

@@ -28,9 +28,10 @@
         }
 
         /**
-         * Break curve into curve segments on either side of intersections
+         * @description
+         * Break curve into smaller polylines on either side of intersections
          */
-        segmentCurves() {
+        divideCurves() {
             let newPaths = [];
             let pathIndex = 0;
             let fromLength = 0;
@@ -59,13 +60,9 @@
                                 previousSegment = this.path.pathSegList[previousSegmentIndex],
                                 currentSegment = this.path.pathSegList[currentSegmentIndex],
                                 nextSegment = this.path.pathSegList[nextSegmentIndex];
-                        // if the next segment is a line
-                        // if the segment length ends before the line does
-                        // segment to full length
-                        // else
-                        // entire line and push fromLength to end of line
 
                         // check for corner.
+                        // todo -- i don't think this is working as expected
                         if (previousSegment) { // if this is not the first segment
                             let angle = Gordium.getAngleBetweenSegments(previousSegment, currentSegment, nextSegment);
                             if (Gordium.isAcuteAngle(angle)) {
@@ -89,9 +86,6 @@
                     points.push(this.path.getPointAtLength(toLength + this.sampleInterval/2).y);
                 }
 
-
-
-
                 pathIndex++;
                 fromLength = toLength;
                 toLength = j === this.intersections.length - 1 ? this.path.getTotalLength() : (this.intersections[j].distance1 + this.intersections[j + 1].distance1) / 2;
@@ -112,7 +106,10 @@
 
 
         /**
+         * @description
+         * calculate which polylines should be on top and which should be on the bottom
          *
+         * todo need different terminology for each phase of the process -- this uses the result of divideCurves
          */
         overUnderCurves() {
             let self = this;
@@ -247,26 +244,18 @@
         }
 
         beginAnimate() {
-//            for (let i = 0; i < this.pathSegments.length; i++) {
-                let points = this.pathSegments[0].points;
+            let points = this.pathSegments[0].points;
 
-                // get angle of first sub-segment
-                let angle = Math.atan(Gordium.getSlope({
-                        x1: points[0],
-                        y1: points[1],
-                        x2: points[2],
-                        y2: points[3]
-                    }));
+            // get angle of first sub-segment
+            let angle = Math.atan(Gordium.getSlope({
+                x1: points[0],
+                y1: points[1],
+                x2: points[2],
+                y2: points[3]
+            }));
 
-//                for(let j=0; j<this.pathSegments[i].points.length; j++) {
-                    let rect = document.getElementById(this.id + "-path-segment-" + 0 + "-clip-path-rect-" + 0);
-
-//                    if (!rect) {
-//                        continue;
-//                    }
-                    this.placeClipPathRectBehindPoint(rect, angle, points[0], points[1]);
-//                }
-//            }
+            let rect = document.getElementById(this.id + "-path-segment-" + 0 + "-clip-path-rect-" + 0);
+            this.placeClipPathRectBehindPoint(rect, angle, points[0], points[1]);
             this.animate(0, 0);
         }
 
@@ -303,10 +292,14 @@
             let angle = Math.atan(isNaN(m) ? 0 : m);
 
             this.placeClipPathRectBehindPoint(rect, angle, points[(subSegmentIndex*2)], points[(subSegmentIndex*2) + 1]);
-            if ((subSegmentIndex*2) < points.length - 4) {
+
+
+            if ((subSegmentIndex*2) < points.length - 4) { // if there are more points in this segment
+                // increase current sub-segment-index
+                // call animate again after time interval
                 setTimeout(function() {self.animate(segmentIndex, subSegmentIndex+1);}, this.config.animateTimeout);
             }
-            else if (segmentIndex < this.pathSegments.length-1) {
+            else if (segmentIndex < this.pathSegments.length-1) { // if there are more segments
                 let id = this.id + "-path-segment-" + segmentIndex + "-clip-path-rect-" + (subSegmentIndex+1);
                 rect = document.getElementById(id);
                 m = Gordium.getSlope({
@@ -318,6 +311,9 @@
                 angle = Math.atan(isNaN(m) ? 0 : m);
                 this.placeClipPathRectBehindPoint(rect, angle, points[(subSegmentIndex*2) + 2], points[(subSegmentIndex*2) + 3]);
 
+                // increase segment index
+                // set sub-segment index to 0
+                // call animate again after time interval
                 setTimeout(function() { self.animate(segmentIndex+1, 0); }, this.config.animateTimeout);
             }
             else {
@@ -341,14 +337,11 @@
                 // if there are more sub-segments in this segment
                     // position next clipping rect on top of previous
                     // move next clipping rect remainder of units
-                    // increase current sub-segment-index
-                // else
-                    // if there are more segments
-                        // increase segment index
-                        // set sub-segment index to 0
+
+
                         // move next clipping rect remainder of units
                     // else end animate loop
-            // call animate again after time interval
+
         }
 
         /**
