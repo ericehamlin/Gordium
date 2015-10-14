@@ -1,19 +1,14 @@
 /**
+ * @description
+ * utilities and general functions for Gordium
+ *
  * TODO
  * Some under/overs are incorrect
- *
- * increase length of paths just slightly so that they overlap
- *
- *
+ * turn radius at ends of
  * get corners at beginning and end of paths
- * default config for individual knots
  * match config to knots
- *
  * unit tests for some things
- *
- * strategy for how to animate
  */
-
 let Gordium = {
 
     svgNS: "http://www.w3.org/2000/svg",
@@ -46,10 +41,24 @@ let Gordium = {
         return promise;
     },
 
+    /**
+     * @description
+     * wrapper for Object.assign, because it wasn't working with Babel
+     *
+     * @param {object} dest
+     * @param {object} src
+     * @returns {*|void}
+     */
     assign: function(dest, src) {
         return Object.assign(dest, src);
     },
 
+    /**
+     *
+     * @param {string} tag
+     * @param {object} attributes
+     * @returns {HTMLElement}
+     */
     createSvgElement(tag, attributes) {
         let element = document.createElementNS(Gordium.svgNS, tag);
         for (let key in attributes) {
@@ -79,7 +88,7 @@ let Gordium = {
     /**
      *
      * @param path
-     * @param segmentIndex
+     * @param {int} segmentIndex
      * @returns {{x: number, y: number}}
      */
     calculateAbsoluteValueOfSegmentEnd: function(path, segmentIndex) {
@@ -97,7 +106,7 @@ let Gordium = {
             }
         }
 
-        return coords
+        return coords;
     },
 
     /**
@@ -119,10 +128,10 @@ let Gordium = {
 
     /**
      *
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
+     * @param {number} x1
+     * @param {number} y1
+     * @param {number} x2
+     * @param {number} y2
      * @returns {number}
      */
     getAngleBetweenVectors: function(x1, y1, x2, y2) {
@@ -154,7 +163,8 @@ let Gordium = {
     },
 
     /**
-     * Approximate curves with Polylines
+     * @description
+     * Approximate curves with polylines
      *
      * @param path
      * @param fromLength
@@ -182,6 +192,7 @@ let Gordium = {
     },
 
     /**
+     * @description
      * Find all intersections and associate them with points on curve
      *
      * slope-intercept form
@@ -204,7 +215,6 @@ let Gordium = {
 
                 // see if path intersects itself
                 for (let k = j + 2; k < points.length - 1; k++) {
-//                for (let k = j + 1; k < points.length - 1; k++) {
                     if (j===0 && k === points.length - 2) { continue; }
                     let segment2 = Gordium.defineSegment(points[k], points[k+1]);
                     let intersection = Gordium.linesIntersect(segment1, segment2);
@@ -247,6 +257,9 @@ let Gordium = {
     },
 
     /**
+     * @description
+     * define a Gordium-style Segment
+     * TODO use only svg segments
      *
      * @param point1
      * @param point2
@@ -306,17 +319,26 @@ let Gordium = {
 
     /**
      *
-     * @param {number} rad
-     * @returns {number}
+     * @param {number} rad radians
+     * @returns {number} degrees
      */
     radToDeg: function(rad) {
         return rad * 180 / Math.PI;
     },
 
+    /**
+     *
+     * @param {int} max
+     * @returns {int}
+     */
     randomInteger: function(max) {
-        return Math.round(Math.random() * max);
+        return parseInt(Math.round(Math.random() * max));
     },
 
+    /**
+     *
+     * @returns {string}
+     */
     randomColor: function() {
         return "rgb(" + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + ")";
     },
