@@ -1,22 +1,14 @@
 /**
- * TODO-XXX
- * get rid of extra intersections (are they at vertical lines? -- I don't think so
- * angle too large is often an indication, but not necessarily. Neither is it necessarily the case that a stray intersection
- * has too large of an angle)
- * And why is that, bozo? I thought you had narrowed down a solution.
- * What do we know?
+ * TODO-xxx:
+ * change linear paths to shapes
+ * need to figure out some way to distinguish between right and left side
  *
- * fixed part 1: lines intersecting with next segment
- * but some legit intersections between 2 lines are doubling
- * - some areas between two segments have multiple unnecessary intersections
- * - do some legitimate (necessary) intersections have multiple intersections? YES
- * - do ONLY legitimate intersections have multiple intersections? NO
+ * TODO-XX
+ * Some under/overs are incorrect
  *
  * increase length of paths just slightly so that they overlap
  *
  *
- * TODO:
- * change linear paths to shapes
  * get corners at beginning and end of paths
  * default config for individual knots
  * match config to knots
@@ -125,6 +117,10 @@ let Gordium = {
         return this.getAngleBetweenVectors(x1,y1, x2,y2)
     },
 
+    dotProduct: function(x1,y1,x2,y2) {
+        return x1*x2 + y1*y2;
+    },
+
     /**
      *
      * @param x1
@@ -138,9 +134,9 @@ let Gordium = {
             /
             (Math.sqrt((x1 * x1) + (y1 * y1)) * Math.sqrt((x2 * x2) + (y2 * y2)));
         let angle = Math.acos(cosine);
-        if (cosine < 0) {
-            angle += Math.PI;
-        }
+//        if (cosine < 0) {
+//            angle += Math.PI;
+//        }
         return angle;
     },
 
@@ -347,5 +343,17 @@ let Gordium = {
         line.setAttribute("stroke", currentColor);
         document.getElementsByTagName("svg")[1].appendChild(line);
 
+    },
+
+    drawDebugPoint: function(x, y, r, style={}) {
+        let currentColor = Gordium.randomColor();
+        let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("r", r);
+        circle.setAttribute("fill", currentColor);
+        circle.setAttribute("cx", x);
+        circle.setAttribute("cy", y);
+
+        // TODO global debug svg
+        document.getElementsByTagName("svg")[1].appendChild(circle);
     }
 };
