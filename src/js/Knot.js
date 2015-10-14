@@ -16,8 +16,9 @@
             /** default config -- can't use Object.assign for some reason */
             this.config = {
                 'color': config.color ? config.color : Gordium.randomColor(),
-                'stroke-width': config['stroke-width'] ? config['stroke-width'] : 10,
+                'width': config['width'] ? config['width'] : 10,
                 'stroke': config.stroke ? config.stroke : Gordium.randomColor(),
+                'stroke-width': config['stroke-width'] ? config['stroke-width'] : 10,
                 'animateTimeout' : config.animateTimeout ? config.animateTimeout : 20
             };
 
@@ -98,92 +99,6 @@
             this.pathSegments = newPaths;
         }
 
-
-        convertStrokesToShapes() {
-            return; // nope, not gonna do it
-            var width = 20;
-            function oneForNaN(val) {
-                return isNaN(val) ? 1 : val;
-            }
-
-            function addPoints(x1,y1, x2,y2, anchorX, anchorY, outsidePoints, insidePoints) {
-                var perpendicular = getPerpendicular(x1,y1, x2,y2);
-
-                var xDiffOut = width * oneForNaN(Math.cos(perpendicular));
-                var yDiffOut = width * oneForNaN(Math.sin(perpendicular));
-                var xDiffIn = -width * oneForNaN(Math.cos(perpendicular));
-                var yDiffIn = -width * oneForNaN(Math.sin(perpendicular));
-
-                //var angleBetween = Gordium.getAngleBetweenVectors(anchorX-x1, anchorY-y1, xDiffOut, yDiffOut);
-//if (Math.abs(angleBetween) < Math.PI/2) {
-                //console.log("AB", angleBetween);
-                if (Gordium.dotProduct(anchorX-x1, anchorY-y1, xDiffOut, yDiffOut)<=0) {
-
-                    xDiffOut = -xDiffOut;
-                    yDiffOut = -yDiffOut;
-                    xDiffIn = -xDiffIn;
-                    yDiffIn = -yDiffIn;
-
-                    Gordium.drawDebugPoint(anchorX, anchorY, 10);
-                }
-
-
-                outsidePoints.push(xDiffOut + anchorX);
-                outsidePoints.push(yDiffOut + anchorY);
-                insidePoints.unshift(yDiffIn + anchorY);
-                insidePoints.unshift(xDiffIn + anchorX);
-            }
-
-            function getPerpendicular(x1,y1, x2,y2) {
-
-                var x3 = x2 - x1,
-                    y3 = y2 - y1;
-                var perpendicular = Math.atan(y3/x3) + (Math.PI/2);
-                if (perpendicular > Math.PI) {
-                }
-                console.log("perp", perpendicular, x1, y1, x2, y2)
-                return perpendicular;
-            }
-
-            var strokeColor =  Gordium.randomColor();
-            var fillColor = Gordium.randomColor();
-
-            console.log(this.pathSegments);
-            for (let i = 0; i < this.pathSegments.length; i++) {
-                let points = this.pathSegments[i].points;
-                let polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-                let insidePoints = [],
-                    outsidePoints = [];
-
-
-//                if (i>0) {
-//                    var lastSegmentPoints = this.pathSegments[i-1].points;
-//                    var secondToLastY = lastSegmentPoints[lastSegmentPoints.length - 3];
-//                    var secondToLastX = lastSegmentPoints[lastSegmentPoints.length - 4];
-//
-//                    addPoints(secondToLastX, secondToLastY, points[2], points[3], points[0], points[1], outsidePoints, insidePoints);
-//                }
-
-                for(let j=0; j < points.length-3; j+=2) {
-                    if (j>=2) {
-                        addPoints(points[j-2], points[j-1], points[j+2], points[j+3], points[j], points[j+1], outsidePoints, insidePoints);
-                    }
-                }
-//                if (i < this.pathSegments.length-1) {
-//                    var nextSegmentPoints = this.pathSegments[i+1].points;
-//                    var secondToNextY = nextSegmentPoints[3];
-//                    var secondToNextX = nextSegmentPoints[2];
-//                    addPoints(points[points.length-4],points[points.length-3], secondToNextX, secondToNextY, points[points.length-2], points[points.length-1], outsidePoints, insidePoints);
-//
-//                }
-                var polyPoints = outsidePoints.concat(insidePoints);
-                polyLine.setAttribute("points", polyPoints);
-                polyLine.setAttribute("fill", fillColor);
-                polyLine.setAttribute("stroke-width", "1");
-                polyLine.setAttribute("stroke", strokeColor);
-                this.destSvg.appendChild(polyLine);
-            }
-        }
 
         /**
          *
@@ -281,7 +196,7 @@
                     let rect = Gordium.createSvgElement("rect", {
                         "id"     : this.id + "-path-segment-" + i + "-clip-path-rect-" + j,
                         "width"  : this.sampleInterval * 3,
-                        "height" : this.config["stroke-width"] + 10
+                        "height" : this.config["width"] + 10
                     });
                     clipPath.appendChild(rect);
                 }
@@ -291,16 +206,18 @@
                     "id": this.id + "-path-segment-" + i,
                     "clip-path": "url(#" + this.id + "-path-segment-" + i + "-clip-path)"
                 });
+
                 let outline = Gordium.createSvgElement("polyline", {
                     "points": points,
                     "fill": "none",
-                    "stroke-width": this.config['stroke-width'] + 4,
-                    "stroke": this.config.stroke,
+                    "stroke-width": this.config['width'] + 4, //this.config['stroke-width']*2,
+                    "stroke": this.config.stroke
                 });
+
                 let polyline = Gordium.createSvgElement("polyline", {
                     "points": points,
                     "fill": "none",
-                    "stroke-width": this.config['stroke-width'],
+                    "stroke-width": this.config['width'],
                     "stroke-linejoin": "round",
                     "stroke": this.config.color
                 });
@@ -345,7 +262,7 @@
         placeClipPathRect(rect, angle, x, y) {
             console.log(angle);
             // rotate clipping rect
-            rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + x + "," + y + ") translate(0, -"+((this.config["stroke-width"] + 10)/2)+")");
+            rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + x + "," + y + ") translate(0, -"+((this.config["width"] + 10)/2)+")");
 
             rect.setAttribute("x", x);
             rect.setAttribute("y", y);
