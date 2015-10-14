@@ -260,7 +260,6 @@
         }
 
         placeClipPathRect(rect, angle, x, y) {
-            console.log(angle);
             // rotate clipping rect
             rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + x + "," + y + ") translate(0, -"+((this.config["width"] + 10)/2)+")");
 
@@ -316,7 +315,7 @@
                 // call animate again after time interval
                 setTimeout(function() { self.animate(segmentIndex+1, 0); }, this.config.animateTimeout);
             }
-            else {
+            else { // else end animate loop -- everything is in place
                 let id = this.id + "-path-segment-" + segmentIndex + "-clip-path-rect-" + (subSegmentIndex+1);
                 rect = document.getElementById(id);
                 m = Gordium.getSlope({
@@ -326,22 +325,10 @@
                     y2: this.pathSegments[0].points[1]
                 });
                 angle = Math.atan(isNaN(m) ? 0 : m);
+
+                // move final clipping path to the end of the curve, revealing the last bit
                 this.placeClipPathRectBehindPoint(rect, angle, points[(subSegmentIndex*2) + 2], points[(subSegmentIndex*2) + 3]);
             }
-
-            // move clipping rect n units along sub-segment
-            // allow for units > sampleInterval
-            // so that we can animate through several sub-segments at one time
-            // if will pass beyond end of sub-segment
-                // move to end of segment
-                // if there are more sub-segments in this segment
-                    // position next clipping rect on top of previous
-                    // move next clipping rect remainder of units
-
-
-                        // move next clipping rect remainder of units
-                    // else end animate loop
-
         }
 
         /**
@@ -361,13 +348,7 @@
          */
         drawDebugCurveSegments() {
             for (let x = 0; x < this.pathSegments.length; x++) {
-                let polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-                polyLine.setAttribute("points", this.pathSegments[x].points);
-                polyLine.setAttribute("fill", "none");
-                polyLine.setAttribute("stroke-width", "3");
-                polyLine.setAttribute("stroke", Gordium.randomColor());
-                this.destSvg.appendChild(polyLine);
-
+                Gordium.drawDebugPolyline(this.pathSegments[x].points);
             }
         }
     }

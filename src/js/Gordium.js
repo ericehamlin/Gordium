@@ -360,6 +360,15 @@ let Gordium = {
 
     },
 
+    drawDebugPolyline: function(points, style={}) {
+        let polyLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+        polyLine.setAttribute("points", points);
+        polyLine.setAttribute("fill", "none");
+        polyLine.setAttribute("stroke-width", "3");
+        polyLine.setAttribute("stroke", Gordium.randomColor());
+        this.destSvg.appendChild(polyLine);
+    },
+
     drawDebugPoint: function(x, y, r, style={}) {
         let currentColor = Gordium.randomColor();
         let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
