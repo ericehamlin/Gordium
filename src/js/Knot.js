@@ -13,14 +13,14 @@
 
             this.id = "knot-" + Gordium.randomInteger(1000);
 
-            /** default config -- can't use Object.assign for some reason */
-            this.config = {
-                'color': config.color ? config.color : Gordium.randomColor(),
-                'width': config['width'] ? config['width'] : 10,
-                'stroke': config.stroke ? config.stroke : Gordium.randomColor(),
-                'stroke-width': config['stroke-width'] ? config['stroke-width'] : 10,
-                'animateTimeout' : config.animateTimeout ? config.animateTimeout : 20
+            let defaultConfig = {
+                'color': Gordium.randomColor(),
+                'width': 10,
+                'stroke': Gordium.randomColor(),
+                'stroke-width': 10,
+                'animateTimeout': 20
             };
+            this.config = Gordium.assign(defaultConfig, config);
 
             this.destSvg = document.getElementById("dest-svg");
 
@@ -79,8 +79,19 @@
                     points.push(this.path.getPointAtLength(i).x);
                     points.push(this.path.getPointAtLength(i).y);
                 }
+
                 points.push(this.path.getPointAtLength(toLength).x);
                 points.push(this.path.getPointAtLength(toLength).y);
+
+                // overlap the next segment slightly so as to avoid gaps
+                if (j !== this.intersections.length - 1) {
+                    points.push(this.path.getPointAtLength(toLength + this.sampleInterval/2).x);
+                    points.push(this.path.getPointAtLength(toLength + this.sampleInterval/2).y);
+                }
+
+
+
+
                 pathIndex++;
                 fromLength = toLength;
                 toLength = j === this.intersections.length - 1 ? this.path.getTotalLength() : (this.intersections[j].distance1 + this.intersections[j + 1].distance1) / 2;

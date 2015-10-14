@@ -1,9 +1,5 @@
 /**
- * TODO-xxx:
- * change linear paths to shapes
- * need to figure out some way to distinguish between right and left side
- *
- * TODO-XX
+ * TODO
  * Some under/overs are incorrect
  *
  * increase length of paths just slightly so that they overlap
@@ -48,6 +44,10 @@ let Gordium = {
             }
         });
         return promise;
+    },
+
+    assign: function(dest, src) {
+        return Object.assign(dest, src);
     },
 
     createSvgElement(tag, attributes) {
@@ -117,10 +117,6 @@ let Gordium = {
         return this.getAngleBetweenVectors(x1,y1, x2,y2)
     },
 
-    dotProduct: function(x1,y1,x2,y2) {
-        return x1*x2 + y1*y2;
-    },
-
     /**
      *
      * @param x1
@@ -134,9 +130,6 @@ let Gordium = {
             /
             (Math.sqrt((x1 * x1) + (y1 * y1)) * Math.sqrt((x2 * x2) + (y2 * y2)));
         let angle = Math.acos(cosine);
-//        if (cosine < 0) {
-//            angle += Math.PI;
-//        }
         return angle;
     },
 

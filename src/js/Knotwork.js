@@ -87,7 +87,7 @@
                 this.knots[i].overUnderCurves();
             }
         }
-        
+
 
         draw() {
             let overGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
