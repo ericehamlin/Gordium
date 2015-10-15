@@ -39,7 +39,7 @@
 
         /**
          * @description
-         * Break path into dividedCurves on either side of intersections
+         * Break path into dividedCurves (polylines) on either side of intersections
          */
         divideCurves() {
             let newPaths = [];

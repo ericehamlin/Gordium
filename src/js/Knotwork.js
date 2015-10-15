@@ -28,7 +28,7 @@
                     self.srcSvg = svg;
                     self.showSvg.insertAdjacentHTML("afterbegin", svg.innerHTML);
                     self.processKnotwork();
-                })
+                });
                 /*.catch(function(error) {
                  throw new Error("Couldn't load source SVG!");
                  });*/
@@ -46,27 +46,26 @@
          *
          */
         processKnotwork() {
-            this.getPathsFromSvg();
-            Gordium.findIntersectionsForKnots(this.knots, this.sampleInterval);
+
+            this.createKnotsFromSvgPaths();
+
+            this.findIntersections();
 
             this.drawDebugIntersections(); // debug
 
             this.divideCurves();
 
-            // find curves from path segments
+            this.overUnderCurves();
 
-            this.overUnderCurves(); // find Over/Under for path segments
-
-            this.draw(); // animate each curve
+            this.draw();
 
             this.animate();
-            //this.drawDebugCurveSegments();
         }
 
         /**
          *
          */
-        getPathsFromSvg() {
+        createKnotsFromSvgPaths() {
             let paths = Gordium.getPathsFromSvg(this.srcSvg);
             for (let i = 0; i < paths.length; i++) {
                 this.knots.push(new Gordium.Knot(paths[i], this.sampleInterval, this.config.knots[i] ? this.config.knots[i] : undefined));
@@ -74,7 +73,77 @@
         }
 
         /**
-         * Break paths into dividedCurves on either side of intersections
+         * @description
+         * Find all intersections and associate them with points on curve
+         *
+         * slope-intercept form
+         * y = mx + b
+         * m = slope of line
+         * b = intercept: point where line crosses y-axis
+         * OR
+         * point-slope form
+         * y = m(x-Px)+Py  (Px and Py are x and y of a point on line)
+         *
+         */
+        findIntersections() {
+            let knots = this.knots,
+                sampleInterval = this.sampleInterval
+            for (let i = 0; i < knots.length; i++) {
+                let knot = knots[i],
+                    points = knot.points;
+
+                for (let j = 0; j < points.length - 1; j++) {
+                    let segment1 = Gordium.defineSegment(points[j], points[j + 1]);
+
+                    Gordium.drawDebugSegment(points[j], points[j + 1]);
+
+                    // see if path intersects itself
+                    for (let k = j + 2; k < points.length - 1; k++) {
+                        if (j === 0 && k === points.length - 2) {
+                            continue;
+                        }
+                        let segment2 = Gordium.defineSegment(points[k], points[k + 1]);
+                        let intersection = Gordium.linesIntersect(segment1, segment2);
+                        if (intersection) {
+                            let distance1 = (j * sampleInterval) + (intersection.segment1Percent * sampleInterval / 100);
+                            let distance2 = (k * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
+
+                            let newIntersection = new Gordium.Intersection(knot, distance1, knot, distance2, intersection.x, intersection.y);
+                            let newIntersection2 = new Gordium.Intersection(knot, distance2, knot, distance1, intersection.x, intersection.y);
+
+                            knot.intersections.push(newIntersection);
+                            knot.intersections.push(newIntersection2);
+                        }
+                    }
+
+                    for (let x = i + 1; x < knots.length; x++) {
+                        let knot2 = knots[x],
+                            points2 = knot2.points;
+
+                        for (let y = 0; y < points2.length - 1; y++) {
+                            let segment2 = Gordium.defineSegment(points2[y], points2[y + 1]);
+                            let intersection = Gordium.linesIntersect(segment1, segment2);
+                            if (intersection) {
+                                let distance1 = (j * sampleInterval) + (intersection.segment1Percent * sampleInterval / 100);
+                                let distance2 = (y * sampleInterval) + (intersection.segment2Percent * sampleInterval / 100);
+                                let newIntersection = new Gordium.Intersection(knot, distance1, knot2, distance2, intersection.x, intersection.y);
+                                let newIntersection2 = new Gordium.Intersection(knot2, distance2, knot, distance1, intersection.x, intersection.y);
+                                knot.intersections.push(newIntersection);
+                                knot2.intersections.push(newIntersection2)
+                            }
+                        }
+                    }
+                }
+
+                knot.intersections.sort(function (a, b) {
+                    return a.distance1 > b.distance1 ? 1 : -1;
+                });
+            }
+        }
+
+        /**
+         * @description
+         * Break paths into dividedCurves (polylines) on either side of intersections
          */
         divideCurves() {
             for (let i = 0; i < this.knots.length; i++) {
@@ -82,13 +151,20 @@
             }
         }
 
+        /**
+         * @description
+         * find Over/Under for path segments
+         */
         overUnderCurves() {
             for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].overUnderCurves();
             }
         }
 
-
+        /**
+         * @description
+         * draw each knot, hidden, in preparation for animation
+         */
         draw() {
             let overGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
             overGroup.setAttribute("id", "over");
@@ -103,6 +179,10 @@
             }
         }
 
+        /**
+         * @description
+         * animate each knot
+         */
         animate() {
             for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].beginAnimate();
