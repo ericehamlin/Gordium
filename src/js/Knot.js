@@ -6,8 +6,7 @@
 
             this.sampleInterval = sampleInterval;
             this.path = path;
-            this.pathSegments = [];
-            this.drawnSegments = [];
+            this.dividedCurves = [];
             this.points = [];
             this.intersections = [];
 
@@ -101,15 +100,13 @@
             points.unshift(this.path.getPointAtLength(fromLength).y);
             points.unshift(this.path.getPointAtLength(fromLength).x);
 
-            this.pathSegments = newPaths;
+            this.dividedCurves = newPaths;
         }
 
 
         /**
          * @description
-         * calculate which polylines should be on top and which should be on the bottom
-         *
-         * todo need different terminology for each phase of the process -- this uses the result of divideCurves
+         * calculates which dividedCurves should be on top and which should be on the bottom
          */
         overUnderCurves() {
             let self = this;
@@ -140,7 +137,7 @@
             else {
                 startIntersectionIndex = intersectionIndex = 0;
                 startOver = over = true;
-                let intersection = this.intersections[0]
+                let intersection = this.intersections[0];
                 intersection.over = over;
                 if (intersection.knot1 !== intersection.knot2) {
                     let idx = indexOfIntersectionOnOtherKnot(intersection.knot2, intersection.x, intersection.y);
@@ -195,12 +192,12 @@
             let defs = document.createElementNS(Gordium.svgNS, "defs");
             this.destSvg.appendChild(defs);
 
-            for (let i = 0; i < this.pathSegments.length; i++) {
-                let points = this.pathSegments[i].points;
+            for (let i = 0; i < this.dividedCurves.length; i++) {
+                let points = this.dividedCurves[i].points;
 
                 let clipPath = document.createElementNS(Gordium.svgNS, "clipPath");
                 clipPath.setAttribute("id", this.id + "-path-segment-" + i + "-clip-path");
-                for(let j=0; j< this.pathSegments[i].points.length/2; j++) {
+                for(let j=0; j< this.dividedCurves[i].points.length/2; j++) {
                     let rect = Gordium.createSvgElement("rect", {
                         "id"     : this.id + "-path-segment-" + i + "-clip-path-rect-" + j,
                         "width"  : this.sampleInterval * 3,
@@ -232,19 +229,20 @@
 
                 group.appendChild(outline);
                 group.appendChild(polyline);
-                if (this.pathSegments[i].intersection.over) {
+                if (this.dividedCurves[i].intersection.over) {
                     overGroup.appendChild(group);
                 }
                 else {
                     underGroup.appendChild(group);
                 }
-
-                this.drawnSegments.push(group);
             }
         }
 
+        /**
+         *
+         */
         beginAnimate() {
-            let points = this.pathSegments[0].points;
+            let points = this.dividedCurves[0].points;
 
             // get angle of first sub-segment
             let angle = Math.atan(Gordium.getSlope({
@@ -259,6 +257,13 @@
             this.animate(0, 0);
         }
 
+        /**
+         *
+         * @param {HTMLElement} rect
+         * @param {number} angle
+         * @param {number} x
+         * @param {number} y
+         */
         placeClipPathRect(rect, angle, x, y) {
             // rotate clipping rect
             rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + x + "," + y + ") translate(0, -"+((this.config["width"] + 10)/2)+")");
@@ -267,6 +272,13 @@
             rect.setAttribute("y", y);
         }
 
+        /**
+         *
+         * @param {HTMLElement} rect
+         * @param {number} angle
+         * @param {number} x
+         * @param {number} y
+         */
         placeClipPathRectBehindPoint(rect, angle, x, y) {
             // subtract width from initial placement
             let cosine = isNaN(angle) ? 0 : Math.cos(angle);
@@ -277,10 +289,18 @@
             this.placeClipPathRect(rect, angle, transX, transY);
         }
 
+        /**
+         * @description
+         * moves one clipping rectangle to the leading edge of the animated line
+         * exposing a little bit more of it and making it look as though it's growing
+         *
+         * @param {int} segmentIndex
+         * @param {int} subSegmentIndex
+         */
         animate(segmentIndex, subSegmentIndex){
             let self = this;
             let rect = document.getElementById(this.id + "-path-segment-" + segmentIndex + "-clip-path-rect-" + subSegmentIndex);
-            let points = this.pathSegments[segmentIndex].points;
+            let points = this.dividedCurves[segmentIndex].points;
             let m = Gordium.getSlope({
                 x1: points[subSegmentIndex*2],
                 y1: points[(subSegmentIndex*2) + 1],
@@ -298,14 +318,14 @@
                 // call animate again after time interval
                 setTimeout(function() {self.animate(segmentIndex, subSegmentIndex+1);}, this.config.animateTimeout);
             }
-            else if (segmentIndex < this.pathSegments.length-1) { // if there are more segments
+            else if (segmentIndex < this.dividedCurves.length-1) { // if there are more segments
                 let id = this.id + "-path-segment-" + segmentIndex + "-clip-path-rect-" + (subSegmentIndex+1);
                 rect = document.getElementById(id);
                 m = Gordium.getSlope({
                     x1: points[(subSegmentIndex*2) + 2],
                     y1: points[(subSegmentIndex*2) + 3],
-                    x2: this.pathSegments[segmentIndex+1].points[0],
-                    y2: this.pathSegments[segmentIndex+1].points[1]
+                    x2: this.dividedCurves[segmentIndex+1].points[0],
+                    y2: this.dividedCurves[segmentIndex+1].points[1]
                 });
                 angle = Math.atan(isNaN(m) ? 0 : m);
                 this.placeClipPathRectBehindPoint(rect, angle, points[(subSegmentIndex*2) + 2], points[(subSegmentIndex*2) + 3]);
@@ -321,8 +341,8 @@
                 m = Gordium.getSlope({
                     x1: points[(subSegmentIndex*2) + 2],
                     y1: points[(subSegmentIndex*2) + 3],
-                    x2: this.pathSegments[0].points[0],
-                    y2: this.pathSegments[0].points[1]
+                    x2: this.dividedCurves[0].points[0],
+                    y2: this.dividedCurves[0].points[1]
                 });
                 angle = Math.atan(isNaN(m) ? 0 : m);
 
@@ -347,8 +367,8 @@
          * TODO debug only
          */
         drawDebugCurveSegments() {
-            for (let x = 0; x < this.pathSegments.length; x++) {
-                Gordium.drawDebugPolyline(this.pathSegments[x].points);
+            for (let x = 0; x < this.dividedCurves.length; x++) {
+                Gordium.drawDebugPolyline(this.dividedCurves[x].points);
             }
         }
     }

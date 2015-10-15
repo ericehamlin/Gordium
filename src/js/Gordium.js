@@ -202,6 +202,9 @@ let Gordium = {
      * OR
      * point-slope form
      * y = m(x-Px)+Py  (Px and Py are x and y of a point on line)
+     *
+     * @param knots
+     * @param sampleInterval
      */
     findIntersectionsForKnots: function(knots, sampleInterval=10) {
         for (let i = 0; i < knots.length; i++) {
