@@ -74,7 +74,7 @@
         }
 
         /**
-         * Break curves into polylines on either side of intersections
+         * Break paths into dividedCurves on either side of intersections
          */
         divideCurves() {
             for (let i = 0; i < this.knots.length; i++) {

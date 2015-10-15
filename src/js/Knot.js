@@ -5,8 +5,19 @@
         constructor(path, sampleInterval = 40, config = {}) {
 
             this.sampleInterval = sampleInterval;
+
+            /**
+             * @description
+             * the original path as it appears in the source file
+             */
             this.path = path;
+
+            /**
+             * @description
+             * path broken into polylines on either side of intersections -- result of divideCurves()
+             */
             this.dividedCurves = [];
+
             this.points = [];
             this.intersections = [];
 
@@ -28,7 +39,7 @@
 
         /**
          * @description
-         * Break curve into smaller polylines on either side of intersections
+         * Break path into dividedCurves on either side of intersections
          */
         divideCurves() {
             let newPaths = [];
@@ -252,47 +263,52 @@
                 y2: points[3]
             }));
 
-            let rect = document.getElementById(this.id + "-path-segment-" + 0 + "-clip-path-rect-" + 0);
-            this.placeClipPathRectBehindPoint(rect, angle, points[0], points[1]);
+            // get the first clipping path
+            let clipPathRect = document.getElementById(this.id + "-path-segment-" + 0 + "-clip-path-rect-" + 0);
+
+            this.placeClipPathRectBehindPoint(clipPathRect, angle, points[0], points[1]);
             this.animate(0, 0);
         }
 
         /**
          *
-         * @param {HTMLElement} rect
+         * @param {HTMLElement} clipPathRect
          * @param {number} angle
          * @param {number} x
          * @param {number} y
          */
-        placeClipPathRect(rect, angle, x, y) {
-            // rotate clipping rect
-            rect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + x + "," + y + ") translate(0, -"+((this.config["width"] + 10)/2)+")");
+        placeClipPathRect(clipPathRect, angle, x, y) {
 
-            rect.setAttribute("x", x);
-            rect.setAttribute("y", y);
+            // rotate clipPathRect
+            clipPathRect.setAttribute("transform", "rotate(" + Gordium.radToDeg(angle) + "," + x + "," + y + ") translate(0, -"+((this.config["width"] + 10)/2)+")");
+
+            clipPathRect.setAttribute("x", x);
+            clipPathRect.setAttribute("y", y);
         }
 
         /**
+         * todo "behind" is misleading
          *
-         * @param {HTMLElement} rect
+         * @param {HTMLElement} clipPathRect
          * @param {number} angle
          * @param {number} x
          * @param {number} y
          */
-        placeClipPathRectBehindPoint(rect, angle, x, y) {
+        placeClipPathRectBehindPoint(clipPathRect, angle, x, y) {
+
             // subtract width from initial placement
             let cosine = isNaN(angle) ? 0 : Math.cos(angle);
             let sine = isNaN(angle) ? 1 : Math.sin(angle);
             let transX = x - (this.sampleInterval * cosine);
             let transY = y - (this.sampleInterval * sine);
 
-            this.placeClipPathRect(rect, angle, transX, transY);
+            this.placeClipPathRect(clipPathRect, angle, transX, transY);
         }
 
         /**
          * @description
-         * moves one clipping rectangle to the leading edge of the animated line
-         * exposing a little bit more of it and making it look as though it's growing
+         * moves one clipping rectangle to the leading edge of the animated polyline
+         * exposing a little bit of the line and making it look as though it's growing
          *
          * @param {int} segmentIndex
          * @param {int} subSegmentIndex
