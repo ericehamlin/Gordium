@@ -8,15 +8,13 @@
 <body>
 
 <svg id="dest-svg" height="1500" width="1500"></svg>
-<div id="show-svg" style="height:1500px;"></div>
 
-<script src="../bower_components/raphael/raphael-min.js"></script>
 <script src="../dist/gordium.js"></script>
 
 <script>
     (function(Gordium) {
         new Gordium.Knotwork("svg/9.svg", null, undefined, {
-            debug:false,
+            debug:true,
             knots: [
                 {"width": 10, "stroke-width":5},
                 {"width": 5, 'animateTimeout':10},

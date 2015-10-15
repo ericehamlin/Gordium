@@ -278,8 +278,11 @@ let Gordium = {
         return "rgb(" + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + "," + Gordium.randomInteger(256) + ")";
     },
 
+    getDebugSvg: function() {
+        return document.getElementById("debug-svg-container").getElementsByTagName("svg")[0];
+    },
+
     /**
-     * TODO debugOnly
      * @param point1
      * @param point2
      */
@@ -291,7 +294,7 @@ let Gordium = {
         line.setAttribute("y1", point1.y);
         line.setAttribute("y2", point2.y);
         line.setAttribute("stroke", currentColor);
-        document.getElementsByTagName("svg")[1].appendChild(line);
+        Gordium.getDebugSvg().appendChild(line);
 
     },
 
@@ -301,7 +304,7 @@ let Gordium = {
         polyLine.setAttribute("fill", "none");
         polyLine.setAttribute("stroke-width", "3");
         polyLine.setAttribute("stroke", Gordium.randomColor());
-        this.destSvg.appendChild(polyLine);
+        Gordium.getDebugSvg().appendChild(polyLine);
     },
 
     drawDebugPoint: function(x, y, r, style={}) {
@@ -311,8 +314,6 @@ let Gordium = {
         circle.setAttribute("fill", currentColor);
         circle.setAttribute("cx", x);
         circle.setAttribute("cy", y);
-
-        // TODO global debug svg
-        document.getElementsByTagName("svg")[1].appendChild(circle);
+        Gordium.getDebugSvg().appendChild(circle);
     }
 };

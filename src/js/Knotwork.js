@@ -19,13 +19,11 @@
             console.log(this.config);
 
             this.destSvg = document.getElementById("dest-svg");
-            this.showSvg = document.getElementById("show-svg");
 
             if (filename !== null) {
 
                 Gordium.loadSvg(filename).then(function (svg) {
                     self.srcSvg = svg;
-                    self.showSvg.insertAdjacentHTML("afterbegin", svg.innerHTML);
                     self.processKnotwork();
                 });
                 /*.catch(function(error) {
@@ -197,6 +195,12 @@
             if (!this.config.debug) {
                 return;
             }
+            this.debugSvgContainer = document.createElementNS("http://www.w3.org/2000/svg", "div");
+            this.debugSvgContainer.setAttribute('id', "debug-svg-container");
+
+            this.debugSvgContainer.insertAdjacentHTML("beforeend", this.srcSvg.innerHTML);
+            document.body.appendChild(this.debugSvgContainer);
+
         }
 
         /**
