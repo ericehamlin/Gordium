@@ -12,17 +12,16 @@
         constructor(filename = null, srcSvg = null, sampleInterval = 10, config = {}) {
             let self = this;
 
-            this.filename = filename;
             this.srcSvg = srcSvg;
             this.knots = [];
             this.sampleInterval = sampleInterval;
             this.config = new Gordium.Config(config);
+            console.log(this.config);
 
             this.destSvg = document.getElementById("dest-svg");
             this.showSvg = document.getElementById("show-svg");
 
             if (filename !== null) {
-                this.filename = filename;
 
                 Gordium.loadSvg(filename).then(function (svg) {
                     self.srcSvg = svg;
@@ -46,6 +45,8 @@
          *
          */
         processKnotwork() {
+
+            this.createDebugSvg();
 
             this.createKnotsFromSvgPaths();
 
@@ -190,19 +191,31 @@
         }
 
         /**
-         * TODO debug only
+         *
+         */
+        createDebugSvg() {
+            if (!this.config.debug) {
+                return;
+            }
+        }
+
+        /**
          */
         drawDebugIntersections() {
-            //return;
+            if (!this.config.debug) {
+                return;
+            }
             for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].drawDebugIntersections();
             }
         }
 
         /**
-         * TODO debug only
          */
         drawDebugCurveSegments() {
+            if (!this.config.debug) {
+                return;
+            }
             for (let i = 0; i < this.knots.length; i++) {
                 this.knots[i].drawDebugCurveSegments();
             }
