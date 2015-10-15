@@ -18,8 +18,6 @@
             this.config = new Gordium.Config(config);
             console.log(this.config);
 
-            this.destSvg = document.getElementById("dest-svg");
-
             if (filename !== null) {
 
                 Gordium.loadSvg(filename).then(function (svg) {
@@ -44,6 +42,8 @@
          */
         processKnotwork() {
 
+            this.createDestSvg();
+
             this.createDebugSvg();
 
             this.createKnotsFromSvgPaths();
@@ -59,6 +59,17 @@
             this.draw();
 
             this.animate();
+        }
+
+        /**
+         * todo option to use existing svg
+         */
+        createDestSvg() {
+            this.destSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            this.destSvg.setAttribute('id', "dest-svg");
+            this.destSvg.setAttribute('width', '1500');
+            this.destSvg.setAttribute('height', '1500');
+            document.body.appendChild(this.destSvg);
         }
 
         /**
